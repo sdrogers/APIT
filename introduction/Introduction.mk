@@ -1,6 +1,6 @@
 % Advanced Programming (IT)
 % Dr. Simon Rogers (simon.rogers@glasgow.ac.uk, @sdrogers)
-% January 2017
+% January 2018
 
 # Formalities
 
