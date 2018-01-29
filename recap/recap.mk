@@ -678,6 +678,8 @@ public class DictionaryTest {
 }
 ~~~~
 
+endnotesonly
+
 ----
 
 # Testing
@@ -881,6 +883,7 @@ public class AssertionExample2 {
 - We also don't worry too much about the efficiency of different data structures and algorithms
 - Those of you in ADS will do lots of this
 
+---
 
 ## Build systems
 
@@ -891,6 +894,9 @@ public class AssertionExample2 {
 	- Maven (the current standard for Java)
 	- ANT (older but still popular)
 - See Tim Storer's ANT guide on Moodle
+
+
+---
 
 ## Software Engineering
 

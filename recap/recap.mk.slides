@@ -454,3 +454,231 @@ public class MyClass<T> {
 - Can also have multiple types in the definition (`<A,B,C,D>`)
 - See `Dictionary.java`
 
+
+----
+
+# Testing
+
+## Debugging
+
+- In semester 1 you learnt to use the Eclipse debugger
+- There is more to testing than debugging
+- In real development projects, many people are wholly devoted to testing
+- Black box, white box
+- Unit testing...
+
+----
+
+## Unit testing
+
+- Testing individual components (e.g. classes, methods) to see if they are fit for use
+- Design a suite of tests that can be run every time objects are changed
+- Separates testing from the classes themselves
+
+----
+
+## JUnit
+
+- `JUnit` is a popular Java unit test framework
+- A *test class* is created for each normal class
+- We can then run `JUnit` and it will automatically perform the tests
+
+----
+
+## `Pointless.java`
+
+~~~~{.java}
+public class Pointless {
+	public int myInt;
+	public Pointless(int n) {
+		myInt = n;
+	}
+	public void increment() {
+		myInt++;
+	}
+	public int getMyInt() {
+		return myInt;
+	}
+}
+~~~~
+
+----
+
+## `PointlessTest.java`
+
+~~~~{.java}
+import org.junit.Test;
+import org.junit.Assert;
+public class PointlessTest {
+	private static final double EPSILON = 1e-12; 
+	@Test public void testIncrement()
+	{
+		Pointless p = new Pointless(1);
+		p.increment();
+		int expected = 2;
+		Assert.assertEquals(expected,p.getMyInt(),EPSILON);
+	}
+}
+~~~~
+
+----
+
+## Compiling
+
+- To compile `PointlessTest` we need `JUnit`
+	- You can do this in eclipse
+	- Or from the command line
+- On a mac:
+
+`javac -cp .:../JUnit/junit-4.12.jar PointlessTest.java`
+
+- `-cp` sets the *class path*
+	- In this case, '.' means current directory and `./JUnit/junit-4.12.jar` is where the `JUnit` `.jar` file is
+
+----
+
+## Running
+
+- Again, possible in Eclipse or from the command line
+- From command line (mac):
+
+`java -cp .:../JUnit/junit-4.12.jar:../JUnit/hamcrest-core-1.3.jar PointlessTest`
+
+- Result:
+
+~~~~
+JUnit version 4.12
+.
+Time: 0.004
+
+OK (1 test)
+~~~~
+
+----
+
+## `Pointless2.java`
+
+- We now add a doubling function
+- and write a new test case (`PointlessTest2.java`)
+- What happens?
+- Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)
+
+----
+
+## Assertions
+
+- `JUnit` testing is done at compile time
+- We might also want runtime checks
+	- to catch runtime errors (e.g. based on input that is unknown at compile time)
+- The naive way is through the use of `if` statements
+
+----
+
+~~~~{.java}
+public class AssertionExample {
+	private int myInt;
+	public AssertionExample(int n) {
+		myInt = n;
+	}
+	public void decrement(int d) {
+		if(d>myInt) {
+			// Cannot decrement!
+			System.out.println("Can't decrement!!");
+		}else {
+			myInt = myInt - d;
+		}
+	}
+	public static void main(String[] args) {
+		new AssertionExample(5).decrement(10);
+	}
+}
+~~~~
+
+----
+
+- Assertions are a neater way to achieve this
+	- Cause the program to exit if the condition is not met
+	- Can be switched on or off at runtime
+		- e.g. switch between runtime and debugging
+
+~~~~{.java}
+public class AssertionExample2 {
+	private int myInt;
+	public AssertionExample2(int n) {
+		myInt = n;
+	}
+	public void decrement(int d) {
+		assert myInt >= d;
+		myInt = myInt - d;
+	}
+	public static void main(String[] args) {
+		new AssertionExample2(5).decrement(10);
+	}
+}
+~~~~
+
+----
+
+- Running:
+
+`java -enableassertions AssertionExample2`
+
+- can also use `-ea`
+- Try running with and without
+- An alternative is to explicitly throw exceptions but..
+	- Takes longer to write
+	- Exceptions cannot be switched off at runtime (slows things down)
+
+----
+
+# JavaDoc
+
+- It's very important to properly document your code
+- Standard comments `//` `/*` are good
+- Javadoc is better!
+- [This]{http://agile.csc.ncsu.edu/SEMaterials/tutorials/javadoc/} is quite a good tutorial
+- See `MyMath` in `JavaDoc` directory
+- Compile with `javadoc MyMath.java` and open `index.html`
+
+----
+
+# Things we are not covering here
+
+## Testing
+
+- We have only touched upon testing. It's very important! Those of you doing SE will cover it more there.
+- Much software engineering is now done in a *test driven* manner.
+	- First write test cases and then write code.
+	- Stop coding when the test cases are finished.
+	- Writing a good set of test cases is hard!
+
+## Data structures
+
+- We make use of Java objects (e.g. `ArrayList`) but we don't worry about how Java implements this
+- We also don't worry too much about the efficiency of different data structures and algorithms
+- Those of you in ADS will do lots of this
+
+---
+
+## Build systems
+
+- Compiling from the command line is fine for simple projects
+- But..when you have a more complex project with lots of *dependencies* things get very complex 
+- Systems exist to help you with this
+- Examples:
+	- Maven (the current standard for Java)
+	- ANT (older but still popular)
+- See Tim Storer's ANT guide on Moodle
+
+
+---
+
+## Software Engineering
+
+- Programming is only a small part of building software
+- Engineering large software projects is hard (evidenced by the number of times they end badly)
+- Youll get lots of SE in, erm, SE
+
+
+
+

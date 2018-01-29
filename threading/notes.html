@@ -59,6 +59,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#what-is-concurrency">What is concurrency?</a></li>
 <li><a href="#mental-models">Mental models</a></li>
 </ul></li>
+<li><a href="#threads-in-java-are-objects">Threads in Java are objects</a></li>
 <li><a href="#creating-threads-in-java">Creating threads in Java</a><ul>
 <li><a href="#implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</a></li>
 <li><a href="#extending-the-thread-class">Extending the <code>Thread</code> class</a></li>
@@ -108,8 +109,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <hr />
 <h2 id="mental-models">Mental models</h2>
 <ul>
-<li>Previously you might have had the model in your head of the computer <strong>being</strong> somewhere in your programme.</li>
-<li>With multiple <em>threads</em>, each thread is (potentially) in a different place <em>at the same time</em>!</li>
+<li>Previously you might have had the model in your head of the computer <strong>being</strong> somewhere in your programme.
+<ul>
+<li>single <em>point of execution</em></li>
+</ul></li>
+<li>With multiple <em>threads</em>, each thread is (potentially) in a different place <em>at the same time</em>!
+<ul>
+<li>multiple <em>points of execution</em></li>
+</ul></li>
+</ul>
+<hr />
+<h1 id="threads-in-java-are-objects">Threads in Java are objects</h1>
+<ul>
+<li>Our previous objects have all been passive</li>
+<li><code>Thread</code> objects are active:
+<ul>
+<li>They have attributes and methods</li>
+<li>But they also run by themselves!</li>
+</ul></li>
 </ul>
 <hr />
 <h1 id="creating-threads-in-java">Creating threads in Java</h1>
@@ -125,9 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 id="implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</h2>
 <p>The <code>Runnable</code> interface is very simple:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">interface</span> Runnable {
-    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
-
-    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>();
 }</code></pre></div>
 <p>To use it:</p>
 <ul>
@@ -244,7 +259,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>The program stops once all threads are complete</li>
 <li>It's impossible for us to know when Java switches from one thread to another</li>
 <li>Note: They're not necessarily on different processors / cores, but might be</li>
-<li>Note: Java always puts the main method in its own thread (you've been using threads all along!)</li>
 </ul>
 <hr />
 <p>As an aside, here are two alternative <code>main</code> methods that would do the same thing. They should both make sense to you:</p>

@@ -26,7 +26,18 @@
 ## Mental models
 
  - Previously you might have had the model in your head of the computer **being** somewhere in your programme.
+ 	- single *point of execution*
  - With multiple *threads*, each thread is (potentially) in a different place *at the same time*!
+ 	- multiple *points of execution*
+
+----
+
+# Threads in Java are objects
+
+ - Our previous objects have all been passive
+ - `Thread` objects are active:
+ 	- They have attributes and methods
+ 	- But they also run by themselves!
 
 ----
 
@@ -47,9 +58,7 @@ The `Runnable` interface is very simple:
 
 ~~~~ {.java}
 public interface Runnable {
-	public void run() {
-
-	}
+	public void run();
 }
 ~~~~
 
@@ -202,7 +211,6 @@ We can see from the order of the `println` statements that both threads are runn
 - The program stops once all threads are complete
 - It's impossible for us to know when Java switches from one thread to another
 - Note: They're not necessarily on different processors / cores, but might be
-- Note: Java always puts the main method in its own thread (you've been using threads all along!)
 
 ----
 
