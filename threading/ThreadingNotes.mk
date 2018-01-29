@@ -32,6 +32,22 @@
 
 ----
 
+# Motivating Example
+
+ - Making a GUI programme that will count down in a number of seconds entered into a JTextField when a button is pressed
+ - `BadFrame.java`: obvious solution doesn't work
+ - `GoodFrame.java`: needs threads.
+ 	- In this case, things are complicated by the use of Swing to make the GUI.
+ 	- We sill start with general Java threads and return to Swing later
+
+notesonly
+
+To understand why `BadFrame.java` doesn't work you have to think a bit about how things happen in Swing (something we will come back to later). But, in short, when you call something like `setText()` on a `Component` it doesn't happen immediately (althogh it previously felt like it did). In fact, it won't happen until whatever is currently happening is completed. In this example, none of the updates to the `JTextField` will happen *until* the code in `actionPerformed` has completed. So, the counting finishes and then all of the `setText()` operations are done. The same applies to detecting button clicks (etc) and updating other GUI components. For example, whilst in the `actionPerformed` method, no button clicks are processed and no other GUI updates done (this is why the button stays in its blue pressed mode until the counting has finished).
+
+endnotesonly
+
+----
+
 # Threads in Java are objects
 
  - Our previous objects have all been passive

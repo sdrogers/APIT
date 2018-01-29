@@ -59,6 +59,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#what-is-concurrency">What is concurrency?</a></li>
 <li><a href="#mental-models">Mental models</a></li>
 </ul></li>
+<li><a href="#motivating-example">Motivating Example</a></li>
 <li><a href="#threads-in-java-are-objects">Threads in Java are objects</a></li>
 <li><a href="#creating-threads-in-java">Creating threads in Java</a><ul>
 <li><a href="#implementing-the-runnable-interface">Implementing the <code>Runnable</code> interface</a></li>
@@ -118,6 +119,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>multiple <em>points of execution</em></li>
 </ul></li>
 </ul>
+<hr />
+<h1 id="motivating-example">Motivating Example</h1>
+<ul>
+<li>Making a GUI programme that will count down in a number of seconds entered into a JTextField when a button is pressed</li>
+<li><code>BadFrame.java</code>: obvious solution doesn't work</li>
+<li><code>GoodFrame.java</code>: needs threads.
+<ul>
+<li>In this case, things are complicated by the use of Swing to make the GUI.</li>
+<li>We sill start with general Java threads and return to Swing later</li>
+</ul></li>
+</ul>
+<p>To understand why <code>BadFrame.java</code> doesn't work you have to think a bit about how things happen in Swing (something we will come back to later). But, in short, when you call something like <code>setText()</code> on a <code>Component</code> it doesn't happen immediately (althogh it previously felt like it did). In fact, it won't happen until whatever is currently happening is completed. In this example, none of the updates to the <code>JTextField</code> will happen <em>until</em> the code in <code>actionPerformed</code> has completed. So, the counting finishes and then all of the <code>setText()</code> operations are done. The same applies to detecting button clicks (etc) and updating other GUI components. For example, whilst in the <code>actionPerformed</code> method, no button clicks are processed and no other GUI updates done (this is why the button stays in its blue pressed mode until the counting has finished).</p>
 <hr />
 <h1 id="threads-in-java-are-objects">Threads in Java are objects</h1>
 <ul>
