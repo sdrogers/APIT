@@ -8,6 +8,11 @@ public class GoodFrame extends JFrame implements ActionListener {
 	private JTextField numberField;
 	private JButton startButton;
 
+
+	// This is the correct way to make things threaded in Swing
+	// A SwingWorker object is used
+	// and the 'worker' code is but in the doInBackground method
+	// we can worry more about the details later...
 	public class CounterWorker extends SwingWorker<Void,Integer> {
 		private Integer startVal;
 		public JTextField outputField;
@@ -37,21 +42,22 @@ public class GoodFrame extends JFrame implements ActionListener {
 		this.setSize(500,100);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JPanel contentPanel = new JPanel();
-		this.add(contentPanel);
-
+		
 		numberField = new JTextField("5",20);
-		contentPanel.add(numberField);
-
 		startButton = new JButton("Start");
 		startButton.addActionListener(this);
+		
+		JPanel contentPanel = new JPanel();
+		contentPanel.add(numberField);
 		contentPanel.add(startButton);
+		this.add(contentPanel);
 
 		this.setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		int startVal = Integer.parseInt(this.numberField.getText());
+		// Create the new worker object and execute it
 		new CounterWorker(startVal,this.numberField).execute();
 	}
 
