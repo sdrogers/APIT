@@ -1,4 +1,4 @@
-% AP(IT) locks and conditions
+% AP(IT) race conditions
 % Simon Rogers, February 2017
 
 Main lab for week 5. See also week5a if you finish this one within the hour.
