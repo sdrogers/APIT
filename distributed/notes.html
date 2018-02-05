@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dr. Simon Rogers" />
+  <title>APIT - Distributed Systems</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">APIT - Distributed Systems</h1>
+<h2 class="author">Dr. Simon Rogers</h2>
+<h3 class="date">5/02/2018</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#servers-and-sockets">Servers and sockets</a><ul>
+<li><a href="#building-a-server">Building a server</a></li>
+<li><a href="#aside-ip-addresses-and-ports">Aside: IP addresses and ports</a></li>
+<li><a href="#building-a-client">Building a client</a></li>
+<li><a href="#whats-happening">What's happening</a></li>
+<li><a href="#client-server-communication">Client-server communication</a></li>
+<li><a href="#sending-a-message-from-the-server-to-the-client">Sending a message from the Server to the Client</a></li>
+<li><a href="#allowing-multiple-connections">Allowing multiple connections</a></li>
+<li><a href="#knowing-when-a-clientserver-has-stopped">Knowing when a client/server has stopped?</a></li>
+<li><a href="#working-in-swing">Working in Swing</a></li>
+<li><a href="#design-exercise---chatroom-application">Design exercise - Chatroom Application</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="overview">Overview</h1>
+<ul>
+<li>Previously saw how we could run multiple processes on one machine - threads</li>
+<li>What about processes communicating across machines?
+<ul>
+<li>Examples?</li>
+</ul></li>
+<li>These are <em>distributed</em> systems</li>
+</ul>
+<h1 id="introduction">Introduction</h1>
+<p>In previous lectures we saw how to create multiple processes (threads) in a single program, on a single machine. We will now turn our attention to systems that can communicate across machines - distributed systems. These typically take the form of a <em>server</em> program running on a machine, and <em>client</em> programs running on other machines (or the same machine). Clients make connections with the server and can then send and receive messages according to a pre-defined set of rules (a <em>protocol</em>). Some obvious examples are:</p>
+<ul>
+<li>The internet: client programs send requests to web servers and the servers respond by returning files that can be, say, rendered in a browser.</li>
+<li>Email: messages are sent between servers and retrieved by client programs.</li>
+</ul>
+<p>As with threads, Java has a lot of built in functionality (<code>java.net</code>, <code>java.io</code>) that makes programming such systems easier.</p>
+<h1 id="servers-and-sockets">Servers and sockets</h1>
+<h2 id="building-a-server">Building a server</h2>
+<ul>
+<li>Servers can be created via <code>ServerSocket</code> objects (<code>SimpleServer</code>):</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.net.*;</span>
+<span class="kw">import java.io.*;</span>
+<span class="kw">public</span> <span class="kw">class</span> SimpleServer {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) <span class="kw">throws</span> IOException {
+        <span class="co">// Make a server object</span>
+        ServerSocket listener = <span class="kw">new</span> ServerSocket(PORT);
+        <span class="co">// Wait for a connection and create a client</span>
+        Socket client = listener.<span class="fu">accept</span>();
+        <span class="co">// Close the connection</span>
+        client.<span class="fu">close</span>();
+    }
+}</code></pre></div>
+<hr />
+<h2 id="aside-ip-addresses-and-ports">Aside: IP addresses and ports</h2>
+<ul>
+<li>The Internet Protocol (IP) is a set of rules used for connecting devices in a network</li>
+<li>All devices on the network are assigned an IP address.</li>
+<li>e.g. 192.168.1.122
+<ul>
+<li>Each portion goes from 0 to 255</li>
+<li>The internet (one particularly large network) will run out of addresses soon.</li>
+<li>There are rules - have a look online</li>
+</ul></li>
+<li>Some special addresses:
+<ul>
+<li>127.0.0.1 - use this to access your own machine <em>from</em> your own machine (localhost)</li>
+</ul></li>
+<li>Finding your address:
+<ul>
+<li><code>ipconfig</code>, <code>ifconfig</code></li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>A particular machine my be involved in several client-server communications</li>
+<li>These are subdivided through the use of <code>ports</code>
+<ul>
+<li>Ports are an abstract thing -- they are produced in software</li>
+</ul></li>
+<li>When we create a server, we choose a (currently unused) port</li>
+<li>Clients need to know which port to access the server through</li>
+<li>In the previous example, we used the port <code>8765</code></li>
+<li>Commonly used ports:
+<ul>
+<li>20,21: FTP</li>
+<li>22: SSH</li>
+<li>80: HTTP</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="building-a-client">Building a client</h2>
+<ul>
+<li>Clients are created via <code>Socket</code> objects (<code>SimpleClient</code>):</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.io.*;</span>
+<span class="kw">import java.net.*;</span>
+<span class="kw">public</span> <span class="kw">class</span> SimpleClient {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
+    <span class="kw">private</span> <span class="dt">static</span> String server = <span class="st">&quot;127.0.0.1&quot;</span>;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) <span class="kw">throws</span> IOException {
+        <span class="co">// Make a socket and try and connect</span>
+        Socket socket = <span class="kw">new</span> Socket(server,PORT);
+        <span class="co">// Close the socket</span>
+        socket.<span class="fu">close</span>();
+    }
+}</code></pre></div>
+<hr />
+<h2 id="whats-happening">What's happening</h2>
+<div class="figure">
+<img src="figures/SimpleServer.jpg" />
+
+</div>
+<p>In this example, <code>handler</code> waits for an incoming connection. As soon as one arrives, it creates a <code>Socket</code> object. As soon as it creates the socket, it closes it and terminates. The client program creates a socket with the server (note it needs the IP address and port. In this case, as both programs are running on the same machine, we use the IP address 127.0.0.1). Once it has connected, it closes the socket and terminates. i.e. when you run the server program it sits waiting until the client program is run and then terminates.</p>
+<hr />
+<h2 id="client-server-communication">Client-server communication</h2>
+<ul>
+<li>Communication can be performed through input and output <code>streams</code>
+<ul>
+<li>Might be a good time to read up on streams...</li>
+</ul></li>
+<li>We will use:
+<ul>
+<li>PrintWriter</li>
+<li>BufferedReader</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="sending-a-message-from-the-server-to-the-client">Sending a message from the Server to the Client</h2>
+<ul>
+<li>In the Server we create a <code>PrintWriter</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">PrintWriter writer = <span class="kw">new</span> PrintWriter(
+    client.<span class="fu">getOutputStream</span>(),<span class="kw">true</span>);</code></pre></div>
+<ul>
+<li>Note the <code>true</code> - this makes the stream automatically flush
+<ul>
+<li>It's a buffered stream: things only get sent when the buffer is full, or is flushed.</li>
+</ul></li>
+<li>In the client we create a <code>BufferedReader</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">BufferedReader reader = <span class="kw">new</span> BufferedReader(
+    <span class="kw">new</span> InputStreamReader(socket.<span class="fu">getInputStream</span>()));</code></pre></div>
+<ul>
+<li><code>println</code> and <code>readLine</code> perform the necessary reading and writing actions</li>
+<li><code>SimpleServer2</code>, <code>SimpleClient2</code></li>
+</ul>
+<hr />
+<div class="figure">
+<img src="figures/SimpleServer2.jpg" />
+
+</div>
+<hr />
+<ul>
+<li>What happens if you remove the <code>true</code> from the PrintWriter constructor?</li>
+<li>What happens if you add the following to the Server, before the <code>println</code>?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">try</span> {
+        Thread.<span class="fu">sleep</span>(<span class="dv">2000</span>);
+    }<span class="kw">catch</span>(InterruptedException e) {
+    }</code></pre></div>
+<hr />
+<h2 id="allowing-multiple-connections">Allowing multiple connections</h2>
+<p>The previous examples kill the server as soon as it has received and killed the first client connection. If we want to allow multiple clients simultaneously, we can embed the client sockets in threads. We will now look at an example client-server application that where the client periodically sends the current date and time to all clients.</p>
+<ul>
+<li><code>DateServer</code> and <code>DateClient</code> implement a client-server system where a server periodically sends the data and time to a single client</li>
+<li>Note the exception handling -- it can get quite complicated!</li>
+<li>To allow for multiple connections, we put the server work (sending the date) into an object that extends <code>Thread</code></li>
+<li><code>DateServer2</code></li>
+<li>When a new connection is accepted, the socket is passed to a new thread object that is then started
+<ul>
+<li>Do we need to change <code>DateClient</code>?</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="knowing-when-a-clientserver-has-stopped">Knowing when a client/server has stopped?</h2>
+<ul>
+<li>Often, it will be useful to know when a client/server has left</li>
+<li>The easiest way is by periodically trying to read a line</li>
+<li>If <code>readLine()</code> returns <code>null</code>, then the other party has gone</li>
+<li><code>DateServer3</code>, <code>DateClient3</code></li>
+</ul>
+<hr />
+<h2 id="working-in-swing">Working in Swing</h2>
+<ul>
+<li>Recall that intensive jobs should all be placed in <code>SwingWorker</code> objects</li>
+<li><code>reader.readLine()</code> waits until a line can be read
+<ul>
+<li>this could take a long time</li>
+</ul></li>
+<li>All client and server operations should be placed within <code>SwingWorker</code> objects</li>
+<li>Example: <code>QuestionServer</code> and <code>QuestionClient</code></li>
+</ul>
+<hr />
+<h2 id="design-exercise---chatroom-application">Design exercise - Chatroom Application</h2>
+</body>
+</html>
