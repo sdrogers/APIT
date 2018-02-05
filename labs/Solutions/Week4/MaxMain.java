@@ -7,6 +7,10 @@ public class MaxMain {
 		public MinMaxFinder(Double[] m) {
 			myArray = m;
 		}
+
+		// The run method can't be passed any parameters
+		// so the row of the array needs to be a class attribute
+		// it also can't return anything so we need getters (below)
 		public void run() {
 			// Find the min and max
 			min = myArray[0];
@@ -20,6 +24,7 @@ public class MaxMain {
 				}
 			}
 		}
+
 		// Methods that allow us to get the min and max values
 		// for collating once finished
 		public Double getMax() {
@@ -30,15 +35,24 @@ public class MaxMain {
 		}
 	}
 
+
+
+
 	public static void main(String[] args) {
+
 		int nRows = 100;
 		int nCols = 50;
 		
 		// Make the data -- note that the method is static so we don't
-		// need to make a MakeData object
+		// need to make a MakeData object, we just call the method
 		Double[][] d = MakeData.generateRandomData(nRows,nCols);
 
+
+		// Need to keep references to the MinMaxFinders to access their 
+		// get methods later
 		MinMaxFinder[] finderArray = new MinMaxFinder[nRows];
+
+		// Need to keep references to the Threads to join them
 		Thread[] threadArray = new Thread[nRows];
 
 
