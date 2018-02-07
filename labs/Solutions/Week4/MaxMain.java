@@ -75,7 +75,7 @@ public class MaxMain {
 		// Once we get here, all threads have finished.
 		// Find the global values
 		Double globalMin = finderArray[0].getMin();
-		Double globalMax = finderArray[1].getMax();
+		Double globalMax = finderArray[0].getMax();
 		for(int i=0;i<nRows;i++) {
 			if(finderArray[i].getMin() < globalMin) {
 				globalMin = finderArray[i].getMin();
