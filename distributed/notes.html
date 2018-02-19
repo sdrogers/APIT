@@ -50,7 +50,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">APIT - Distributed Systems</h1>
 <h2 class="author">Dr. Simon Rogers</h2>
-<h3 class="date">5/02/2018</h3>
+<h3 class="date">19/02/2018</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -87,6 +87,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>As with threads, Java has a lot of built in functionality (<code>java.net</code>, <code>java.io</code>) that makes programming such systems easier.</p>
 <h1 id="servers-and-sockets">Servers and sockets</h1>
+<ul>
+<li>We will build <em>Servers</em> and <em>Clients</em></li>
+<li>Java has inbuilt objects to do this</li>
+<li><code>ServerSocket</code> -- server</li>
+<li><code>Socket</code> -- client</li>
+</ul>
+<hr />
 <h2 id="building-a-server">Building a server</h2>
 <ul>
 <li>Servers can be created via <code>ServerSocket</code> objects (<code>SimpleServer</code>):</li>
@@ -112,7 +119,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>e.g. 192.168.1.122
 <ul>
 <li>Each portion goes from 0 to 255</li>
-<li>The internet (one particularly large network) will run out of addresses soon.</li>
 <li>There are rules - have a look online</li>
 </ul></li>
 <li>Some special addresses:
@@ -170,9 +176,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>Communication can be performed through input and output <code>streams</code>
 <ul>
-<li>Might be a good time to read up on streams...</li>
+<li>Streams are <em>continuous flows of data</em>. i.e. data can be put in at one end, and read at the other end</li>
+<li>Streams transmit (normally) bytes or chars</li>
+<li>In Java, objects that are <code>Serializable</code> can be transformed into bytes/chars and sent down a stream</li>
+<li>They can then be read (and cast) at the other end</li>
+<li>E.g. we will use the fact that <code>String</code> is <code>Serializable</code></li>
 </ul></li>
-<li>We will use:
+<li>We will use the following Stream classes:
 <ul>
 <li>PrintWriter</li>
 <li>BufferedReader</li>

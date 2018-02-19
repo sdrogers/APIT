@@ -1,6 +1,6 @@
 % APIT - Distributed Systems
 % Dr. Simon Rogers
-% 5/02/2018
+% 19/02/2018
 
 
 # Overview
@@ -24,6 +24,13 @@ As with threads, Java has a lot of built in functionality (`java.net`, `java.io`
 endnotesonly
 
 # Servers and sockets
+
+ - We will build *Servers* and *Clients*
+ - Java has inbuilt objects to do this
+ - `ServerSocket` -- server
+ - `Socket` -- client
+
+----
 
 ## Building a server
 
@@ -53,7 +60,6 @@ public class SimpleServer {
 - All devices on the network are assigned an IP address.
 - e.g. 192.168.1.122
 	- Each portion goes from 0 to 255
-	- The internet (one particularly large network) will run out of addresses soon.
 	- There are rules - have a look online
 - Some special addresses:
 	- 127.0.0.1 - use this to access your own machine *from* your own machine (localhost)
@@ -111,8 +117,12 @@ endnotesonly
 ## Client-server communication
 
 - Communication can be performed through input and output `streams`
-	- Might be a good time to read up on streams...
-- We will use:
+	- Streams are *continuous flows of data*. i.e. data can be put in at one end, and read at the other end
+	- Streams transmit (normally) bytes or chars
+	- In Java, objects that are `Serializable` can be transformed into bytes/chars and sent down a stream
+	- They can then be read (and cast) at the other end
+	- E.g. we will use the fact that `String` is `Serializable`
+- We will use the following Stream classes:
 	- PrintWriter
 	- BufferedReader
 

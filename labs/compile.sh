@@ -1,1 +1,1 @@
-pandoc -V geometry='margin=1in' Week5.mk -o Week5.pdf
+pandoc -V geometry='margin=1in' Week7.mk -o Week7.pdf
