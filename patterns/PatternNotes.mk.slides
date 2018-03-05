@@ -38,8 +38,9 @@
 `for(Integer a: ItArray){}`
 - Your object must also implement `Iterable` and its only method:
 	- `Iterator<E> iterator()`
-- e.g. `ItCollection` and `Finder2` (or `ItArray2` and `Finder3`)
-	- Note it's common to wrap your object in another that implements `Iterable`
+- e.g. `ItTest` (or older code: `ItCollection` and `Finder2` (or `ItArray2` and `Finder3`))
+- Warning: be careful when iterating over the same thing twice at the same time...you only have one `pos`
+	- It's sensible to return a new version of your object in the `iterator()` method...
 
 ## List iterators
 
@@ -51,7 +52,7 @@
 ## The composite pattern
 
 - In some applications we might need to perform the same operation on objects or groups of objects. e.g.
-	- file system question in lab exam
+	- file systems: computing the size of files and folders of files
 	- items and groups of items in an online shop
 - Taking the shop example: imagine all items in the shop have a price. Items can be purchased individually or in multi-packs (i.e. groups of items at once). Any particular customer has a percentage discount that needs to be applied when the price is computed. Not all items are discounted.
 
@@ -108,7 +109,7 @@
 - Useful in any application where objects can be in a hierarchy.
 - What would we need to do to allow composites of composites?
 
-## The factory pattern (by popular request)
+## Factory methods and The factory pattern
 
 - Note that factories blur the line of what is and isn't a pattern, depending on their use. Doesn't matter though, they can be useful however you use them!
 - Most objects are created via a call to new, which calls the `constructor`
