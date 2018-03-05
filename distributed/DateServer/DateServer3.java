@@ -43,7 +43,7 @@ public class DateServer3 {
 					socket.close();
 				}catch(IOException e) {
 				}finally {
-					System.out.println("\tCo	nnection closed on thread " + this.getName());
+					System.out.println("\tConnection closed on thread " + this.getName());
 				}
 			}
 		}

@@ -1,0 +1,27 @@
+public class CompositeExample {
+	public static void main(String[] args) {
+
+		// Create some leaf objects
+		ShopLeaf pencil = new ShopLeaf(1.0,false,"Pencil");
+		ShopLeaf notebook = new ShopLeaf(3.5,true,"Notebook");
+		ShopLeaf printerInk = new ShopLeaf(105.0,true,"Ink");
+		ShopLeaf pencilCase = new ShopLeaf(2.5,false,"Pencil Case");
+
+		// Create a composite object
+		ShopComposite pencilandCase = new ShopComposite("Pencil and case");
+		pencilandCase.add(pencil);
+		pencilandCase.add(pencilCase);
+
+		ShopComposite backToSchool = new ShopComposite("Back To School");
+		// Add some leaves to it
+		backToSchool.add(pencilandCase);
+		backToSchool.add(notebook);
+
+		// Call the compPrice() method
+		Double myDiscount = 10.0;
+		System.out.println(pencil + " costs " + pencil.compPrice(myDiscount));
+		System.out.println(notebook + " costs " + notebook.compPrice(myDiscount));
+		System.out.println(pencilandCase + " costs " + pencilandCase.compPrice(myDiscount));
+		System.out.println(backToSchool + " costs " + backToSchool.compPrice(myDiscount));
+	}
+}

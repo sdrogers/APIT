@@ -1,0 +1,731 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Simon Rogers" />
+  <title>AP(IT): Design Patterns</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">AP(IT): Design Patterns</h1>
+<h2 class="author">Simon Rogers</h2>
+<h3 class="date">23rd Feb 2015</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#what-are-patterns">What are patterns?</a></li>
+</ul></li>
+<li><a href="#some-useful-patterns">Some useful patterns</a><ul>
+<li><a href="#iterators">Iterators</a></li>
+<li><a href="#javas-iterator-interface">Java's <code>Iterator</code> interface</a></li>
+<li><a href="#javas-for-loops">Java's <code>for</code> loops</a></li>
+<li><a href="#list-iterators">List iterators</a></li>
+<li><a href="#the-composite-pattern">The composite pattern</a></li>
+<li><a href="#the-composite-pattern---definition">The composite pattern - definition</a></li>
+<li><a href="#composite-pattern---shop-example---component">Composite pattern - shop example - <code>component</code></a></li>
+<li><a href="#composite-pattern---shop-example---leaf">Composite pattern - shop example - <code>leaf</code></a></li>
+<li><a href="#composite-pattern---shop-example---composite">Composite pattern - shop example - <code>composite</code></a></li>
+<li><a href="#composite-pattern---summary">Composite pattern - summary</a></li>
+<li><a href="#the-factory-pattern-by-popular-request">The factory pattern (by popular request)</a></li>
+<li><a href="#factory-methods">Factory methods</a></li>
+<li><a href="#factory-methods---complex-numbers">Factory methods - complex numbers</a></li>
+<li><a href="#factory-pattern">Factory pattern</a></li>
+<li><a href="#factory-pattern---example">Factory pattern - example</a></li>
+<li><a href="#factory-pattern---example-1">Factory pattern - example 1</a></li>
+<li><a href="#factory-pattern---example-2">Factory pattern - example 2</a></li>
+<li><a href="#factory-pattern---example-3">Factory pattern - example 3</a></li>
+<li><a href="#factory-pattern---summary">Factory pattern - summary</a></li>
+<li><a href="#visitor-pattern">Visitor pattern</a></li>
+<li><a href="#visitor-pattern-definitions">Visitor pattern definitions</a></li>
+<li><a href="#visitor-pattern---diagram">Visitor pattern - diagram</a></li>
+<li><a href="#visitor-pattern---examples">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---examples-1">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---examples-2">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---examples-3">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---examples-4">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---examples-5">Visitor pattern - examples</a></li>
+<li><a href="#visitor-pattern---summary">Visitor pattern - summary</a></li>
+<li><a href="#visitor-pattern---displaystuffvisitor">Visitor pattern - <code>DisplayStuffVisitor</code></a></li>
+<li><a href="#the-proxy-pattern">The Proxy pattern</a></li>
+<li><a href="#proxy---example">Proxy - example</a></li>
+<li><a href="#proxy---example-1">Proxy - example</a></li>
+<li><a href="#proxy---example-2">Proxy - example</a></li>
+<li><a href="#proxy---example-3">Proxy - example</a></li>
+<li><a href="#the-decorator-pattern">The decorator pattern</a></li>
+<li><a href="#the-decorator-pattern-1">The decorator pattern</a></li>
+<li><a href="#the-decorator-pattern-2">The decorator pattern</a></li>
+<li><a href="#the-decorator-pattern-3">The decorator pattern</a></li>
+<li><a href="#the-decorator-pattern-4">The decorator pattern</a></li>
+<li><a href="#the-decorator-pattern-5">The decorator pattern</a></li>
+<li><a href="#the-observer-pattern">The observer pattern</a></li>
+<li><a href="#the-decorator-pattern-6">The decorator pattern</a></li>
+<li><a href="#the-subject"> The Subject</a></li>
+<li><a href="#abstract-observer">Abstract Observer</a></li>
+<li><a href="#concrete-list-data-observer">Concrete list data observer</a></li>
+<li><a href="#concrete-mean-data-observer">Concrete mean data observer</a></li>
+<li><a href="#observer-pattern">Observer pattern</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="introduction">Introduction</h1>
+<h2 id="what-are-patterns">What are patterns?</h2>
+<ul>
+<li>Sets of rules that, if followed, allow easy code understanding and re-use</li>
+<li>Separation of tasks: e.g. <em>iterators</em> decouple algorithms from data objects</li>
+<li>Can operate at many levels:
+<ul>
+<li>Whole applications (e.g. Model-View-Controller)</li>
+<li>Small parts of an application (e.g. iterators)</li>
+</ul></li>
+</ul>
+<h1 id="some-useful-patterns">Some useful patterns</h1>
+<h2 id="iterators">Iterators</h2>
+<ul>
+<li>Many algorithms require the ability to move through a collection of objects
+<ul>
+<li>Finding, sorting, etc</li>
+</ul></li>
+<li>We'll concentrate on finding - i.e. we'd like to find the position of some object in the collection
+<ul>
+<li>Can we make a general finder that will work with <em>any</em> collection of objects?</li>
+<li>Yes: we just need to define various operations that the collection should be able to perform (<em>Design Pattern</em>)
+<ul>
+<li>What do we need?</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="javas-iterator-interface">Java's <code>Iterator</code> interface</h2>
+<ul>
+<li>For an object to be iterable in Java, it must implement the <code>Iterator</code> interface</li>
+<li>To do so, it must implement the methods:
+<ul>
+<li><code>hasNext()</code> (boolean - returns true if there is at least one more element in the iterator)</li>
+<li><code>next()</code> (type <code>T</code> - returns a reference to the next object in the iterator)</li>
+<li>e.g. <code>ItArray</code> and <code>Finder</code></li>
+</ul></li>
+</ul>
+<p><code>ItArray.java</code>:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">import java.util.Iterator;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ItArray <span class="kw">implements</span> Iterator {
+    <span class="co">// Inside my iterable array, I&#39;ll have a standard array</span>
+    <span class="kw">public</span> Integer[] array;
+    <span class="co">// Start at position zero</span>
+    <span class="dt">int</span> pos = <span class="dv">0</span>;
+    <span class="kw">public</span> <span class="fu">ItArray</span>(Integer[] array) {
+        <span class="co">// Copies a reference to the array</span>
+        <span class="kw">this</span>.<span class="fu">array</span> = array;
+    }
+    <span class="co">// hasNext returns true if there are any items left</span>
+    <span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">hasNext</span>() {
+        <span class="kw">if</span>(pos&lt;array.<span class="fu">length</span>) {
+            <span class="kw">return</span> <span class="kw">true</span>;
+        } <span class="kw">else</span> {
+            <span class="kw">return</span> <span class="kw">false</span>;
+        }
+    }
+    <span class="co">// return the next item (and increment the position)</span>
+    <span class="kw">public</span> Integer <span class="fu">next</span>() {
+        <span class="kw">return</span> array[pos++];
+    }
+    <span class="co">// Remove it optional - you don&#39;t have to implement it but</span>
+    <span class="co">// you do have to define it. If you don&#39;t implement it, have it </span>
+    <span class="co">// throw an exception.</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">remove</span>() {
+        <span class="kw">throw</span> <span class="kw">new</span> UnsupportedOperationException();  
+    }
+
+}</code></pre></div>
+<p><code>Finder.java</code>:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">import java.util.Iterator;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Finder {
+    <span class="co">// Completely generic find method - can take any object and any iterator</span>
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">int</span> <span class="fu">find</span>(Object obj,Iterator b) {
+        <span class="dt">int</span> pos = <span class="dv">0</span>;
+        <span class="kw">while</span>(b.<span class="fu">hasNext</span>()) {
+            <span class="kw">if</span>(obj == b.<span class="fu">next</span>()) {
+                <span class="kw">return</span> pos;
+            }
+            pos++;
+        }
+        <span class="kw">return</span> -<span class="dv">1</span>;
+    }
+
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        <span class="co">// Create an example ItArray object</span>
+        Integer[] test = <span class="kw">new</span> Integer[<span class="dv">5</span>];
+        test[<span class="dv">0</span>] = <span class="dv">1</span>;test[<span class="dv">1</span>] = <span class="dv">2</span>;test[<span class="dv">2</span>] = <span class="dv">3</span>;test[<span class="dv">3</span>] = <span class="dv">4</span>;test[<span class="dv">4</span>] = <span class="dv">5</span>;
+        ItArray ia = <span class="kw">new</span> <span class="fu">ItArray</span>(test);
+        Integer toFind = <span class="dv">2</span>;
+
+
+        <span class="co">// Try and find 2</span>
+        <span class="dt">int</span> pos = <span class="fu">find</span>(toFind,ia);
+        
+        System.<span class="fu">out</span>.<span class="fu">println</span>(pos);
+    }
+}</code></pre></div>
+<h2 id="javas-for-loops">Java's <code>for</code> loops</h2>
+<ul>
+<li>If you want to be able to put your type in the new <code>for</code> loop: <code>for(Integer a: ItArray){}</code></li>
+<li>Your object must also implement <code>Iterable</code> and its only method:
+<ul>
+<li><code>Iterator&lt;E&gt; iterator()</code></li>
+</ul></li>
+<li>e.g. <code>ItCollection</code> and <code>Finder2</code> (or <code>ItArray2</code> and <code>Finder3</code>)
+<ul>
+<li>Note it's common to wrap your object in another that implements <code>Iterable</code></li>
+</ul></li>
+</ul>
+<h2 id="list-iterators">List iterators</h2>
+<ul>
+<li><code>Iterator</code> has a sub-interface: <code>ListIterator</code> with more methods:
+<ul>
+<li>See <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html">ListIterator</a></li>
+<li>See <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html">ArrayList</a> for an object that implements <code>ListIterator</code> and <code>Iterator</code></li>
+</ul></li>
+</ul>
+<h2 id="the-composite-pattern">The composite pattern</h2>
+<ul>
+<li>In some applications we might need to perform the same operation on objects or groups of objects. e.g.
+<ul>
+<li>file system question in lab exam</li>
+<li>items and groups of items in an online shop</li>
+</ul></li>
+<li>Taking the shop example: imagine all items in the shop have a price. Items can be purchased individually or in multi-packs (i.e. groups of items at once). Any particular customer has a percentage discount that needs to be applied when the price is computed. Not all items are discounted.</li>
+</ul>
+<h2 id="the-composite-pattern---definition">The composite pattern - definition</h2>
+<ul>
+<li>There are three interfaces in the composite pattern
+<ul>
+<li><code>component</code>: this is the highest level of abstraction. It defines all of the methods we want to be able to invoke on objects or groups of objects. Normally an interface.</li>
+<li><code>leaf</code>: individual objects in the system (items that can be purchased). Implements everything in <code>component</code></li>
+<li><code>composite': class for groups of objects. Implements everything in</code>component<code>as well as</code>add<code>and</code>remove` method for adding and removing objects.</li>
+</ul></li>
+</ul>
+<h2 id="composite-pattern---shop-example---component">Composite pattern - shop example - <code>component</code></h2>
+<ul>
+<li>There is one method we want to be able to invoke on objects or composites: <code>compPrice(Double discount)</code>;</li>
+<li><code>component</code> is therefore:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="kw">interface</span> ShopComponent {
+        <span class="kw">public</span> Double <span class="fu">compPrice</span>(Double discount);
+    }</code></pre></div>
+<h2 id="composite-pattern---shop-example---leaf">Composite pattern - shop example - <code>leaf</code></h2>
+<ul>
+<li>Each item needs a name, a base price and a boolean that says whether it can be discounted or not:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+    <span class="kw">public</span> <span class="kw">class</span> ShopLeaf <span class="kw">implements</span> ShopComponent {
+        <span class="kw">private</span> Double basePrice;
+        <span class="kw">private</span> Boolean canBeDiscounted;
+        <span class="kw">public</span> <span class="fu">ShopLeaf</span>(Double base,Boolean disc) {
+            basePrice = base;
+            canBeDiscounted = disc;
+        }
+        <span class="kw">public</span> Double <span class="fu">compPrice</span>(Double discount) {
+            <span class="kw">if</span>(canBeDiscounted) {
+                <span class="kw">return</span> basePrice*(<span class="fl">1.0</span>-(discount)/<span class="fl">100.0</span>);
+            }<span class="kw">else</span> {
+                <span class="kw">return</span> basePrice;
+            }
+        }
+    }</code></pre></div>
+<h2 id="composite-pattern---shop-example---composite">Composite pattern - shop example - <code>composite</code></h2>
+<ul>
+<li>A composite needs a structure to hold its children (leaves) as well as additional methods for adding or removing a child.</li>
+<li>See <code>ShopComposite.java</code></li>
+<li><code>CompositeExample.java</code> gives an example</li>
+</ul>
+<h2 id="composite-pattern---summary">Composite pattern - summary</h2>
+<ul>
+<li>Final implementation of methods is usually deferred to the leaves.</li>
+<li>Useful in any application where objects can be in a hierarchy.</li>
+<li>What would we need to do to allow composites of composites?</li>
+</ul>
+<h2 id="the-factory-pattern-by-popular-request">The factory pattern (by popular request)</h2>
+<ul>
+<li>Note that factories blur the line of what is and isn't a pattern, depending on their use. Doesn't matter though, they can be useful however you use them!</li>
+<li>Most objects are created via a call to new, which calls the <code>constructor</code></li>
+<li>Constructors can be overloaded (defined in multiple-forms)</li>
+<li>Not always possible to get what you want...</li>
+</ul>
+<h2 id="factory-methods">Factory methods</h2>
+<ul>
+<li>Methods that create new objects</li>
+<li><a href="http://en.wikipedia.org/wiki/Factory_(object-oriented_programming)#Java">Nice example from Wikipedia</a></li>
+<li>Complex numbers can be represented as a real and complex co-ordinate or as an angle and a radius. We'd like to store as co-ordinates but should allow creation either way.</li>
+<li>Both ways require two doubles so we can't overload constructors.</li>
+<li>Answer: create factory methods:</li>
+</ul>
+<h2 id="factory-methods---complex-numbers">Factory methods - complex numbers</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">class</span> Complex {
+    <span class="kw">public</span> <span class="dt">static</span> Complex <span class="fu">fromCart</span>(<span class="dt">double</span> r,<span class="dt">double</span> i) {
+        <span class="kw">return</span> <span class="kw">new</span> <span class="fu">Complex</span>(r,i);
+    }
+    <span class="kw">public</span> <span class="dt">static</span> Complex <span class="fu">fromPolar</span>(<span class="dt">double</span> r, <span class="dt">double</span> a) {
+        <span class="kw">return</span> <span class="kw">new</span> <span class="fu">complex</span>(r*<span class="fu">cos</span>(a),r*<span class="fu">sin</span>(a));
+    }
+    <span class="kw">private</span> <span class="fu">Complex</span>(<span class="dt">double</span> r,i) {
+        ...
+        <span class="co">// Note private constructor!</span>
+    }
+}</code></pre></div>
+<h2 id="factory-pattern">Factory pattern</h2>
+<ul>
+<li>Separates use of objects from their creation</li>
+<li>E.g. We have some abstract class or interface (e.g. shape)</li>
+<li>We build a program to manipulate these objects</li>
+<li>Don't want to change it if new objects are added</li>
+<li>All creation is done via a separate factory class</li>
+</ul>
+<h2 id="factory-pattern---example">Factory pattern - example</h2>
+<ul>
+<li>Drawing program</li>
+<li>Users type in a shape type to draw</li>
+<li>Program passes string to factory</li>
+<li>Factory creates object and returns it (as abstract)</li>
+<li>Program manipulates object</li>
+<li>Can also add and remove class types from factory without changing factory code
+<ul>
+<li>But this gets complex</li>
+</ul></li>
+</ul>
+<h2 id="factory-pattern---example-1">Factory pattern - example 1</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">public</span> Interface Shape {
+    <span class="kw">public</span> <span class="fu">draw</span>();
+}
+<span class="kw">public</span> <span class="kw">class</span> Rectangle <span class="kw">implements</span> Shape {
+    <span class="kw">public</span> <span class="fu">draw</span>() {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Drawing a rectangle&quot;</span>);
+    }
+}
+<span class="kw">public</span> <span class="kw">class</span> Circle <span class="kw">implements</span> Shape {
+    <span class="kw">public</span> <span class="fu">draw</span>() {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Drawing a circle&quot;</span>);
+    }
+}</code></pre></div>
+<h2 id="factory-pattern---example-2">Factory pattern - example 2</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">public</span> <span class="kw">class</span> ShapeFactory {
+    <span class="kw">public</span> <span class="dt">static</span> Shape <span class="fu">makeShape</span>(String shapeType) {
+        <span class="kw">if</span>(shapeType.<span class="fu">equals</span>(<span class="st">&quot;RECTANGLE&quot;</span>)) {
+            <span class="kw">return</span> <span class="kw">new</span> Rectangle();
+        }<span class="kw">else</span> <span class="kw">if</span>(shapeType.<span class="fu">equals</span>(<span class="st">&quot;CIRCLE&quot;</span>)) {
+            <span class="kw">return</span> <span class="kw">new</span> <span class="fu">Circle</span>();
+        }
+    }
+}</code></pre></div>
+<h2 id="factory-pattern---example-3">Factory pattern - example 3</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Enter type of shape:&quot;</span>);
+        String shape = System.<span class="fu">console</span>.<span class="fu">readLine</span>();
+        Shape newShape = ShapeFactory.<span class="fu">makeShape</span>(shape);
+        newShape.<span class="fu">draw</span>();
+    }</code></pre></div>
+<h2 id="factory-pattern---summary">Factory pattern - summary</h2>
+<ul>
+<li>The drawing program <code>FactoryTest</code> wouldn't need to be changed at all if further shapes were added.</li>
+<li>This is particularly useful in complex systems where changes would otherwise be required in lots of places</li>
+<li>Note that it assumes that in the drawing program we would only use the methods declared in <code>Shape</code> and not new methods declared in the different concrete objects (there weren't any in my example)</li>
+</ul>
+<h2 id="visitor-pattern">Visitor pattern</h2>
+<ul>
+<li>Some times is is useful to keep some methods away from our nice neat class hierarchies
+<ul>
+<li>e.g. methods that are platform/device specific that would require multiple definitions in each class</li>
+<li>methods that span unrelated classes</li>
+<li>or perhaps we want to make new methods without modifying the classes themselves</li>
+</ul></li>
+<li>The <code>visitor</code> pattern allows us to do this</li>
+<li>Running example: we have a set of (unrelated) objects (e.g. of types human, dog), each of which has an age-related attribute (e.g. age, or date of birth). In another part of our program we require the ages of all of these objects in days. We don't want to change the definitions of <code>human</code> and <code>dog</code> so we use the <code>visitor</code> pattern.</li>
+</ul>
+<h2 id="visitor-pattern-definitions">Visitor pattern definitions</h2>
+<ul>
+<li>The visitor pattern defines two interfaces:
+<ul>
+<li>The <code>Element</code> interface: each of our original types must implement this, it has one method: <code>accept(Visitor visitor)</code></li>
+<li>The <code>Visitor</code> interface: classes implementing our new methods implement this. We must define a <code>visit</code> method for each of the original types.</li>
+<li>Once we force our original obejcts to implement <code>MyElement</code> we can add as many visitors (doing different things) as we like.</li>
+</ul></li>
+</ul>
+<h2 id="visitor-pattern---diagram">Visitor pattern - diagram</h2>
+<div class="figure">
+<img src="visitor_cartoon.jpg" alt="" />
+
+</div>
+<h2 id="visitor-pattern---examples">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">interface</span> MyElement {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(MyVisitor visitor);
+}</code></pre></div>
+<ul>
+<li><code>MyElement</code> only implements the <code>accept</code> method and this just calls the <code>visit</code> method of <code>MyVisitor</code></li>
+</ul>
+<h2 id="visitor-pattern---examples-1">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">interface</span> MyVisitor {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Dog dog);
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Human human);
+}</code></pre></div>
+<ul>
+<li><code>MyVisitor</code> forces subclasses to implement methods for each of the original objects</li>
+</ul>
+<h2 id="visitor-pattern---examples-2">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.Calendar;</span>
+<span class="kw">public</span> <span class="kw">class</span> Human <span class="kw">implements</span> MyElement {
+    <span class="kw">public</span> Calendar dOB;
+    <span class="kw">public</span> <span class="fu">Human</span>(Calendar d) {
+        dOB = d;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(MyVisitor visitor) {
+        visitor.<span class="fu">visit</span>(<span class="kw">this</span>);
+    }
+}</code></pre></div>
+<ul>
+<li><code>accept</code> is always the same...</li>
+</ul>
+<h2 id="visitor-pattern---examples-3">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> Dog <span class="kw">implements</span> MyElement{
+    <span class="kw">public</span> Integer ageYears;
+    <span class="kw">public</span> <span class="fu">Dog</span>(Integer a) {
+        ageYears = a;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(MyVisitor visitor) {
+        visitor.<span class="fu">visit</span>(<span class="kw">this</span>);
+    }
+}</code></pre></div>
+<h2 id="visitor-pattern---examples-4">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.GregorianCalendar;</span>
+<span class="kw">public</span> <span class="kw">class</span> CompAgeDaysVisitor <span class="kw">implements</span> MyVisitor {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Human human) {
+        <span class="co">// Converting dates to differences in days</span>
+        GregorianCalendar today = <span class="kw">new</span> GregorianCalendar();
+        <span class="dt">long</span> diffSeconds = (today.<span class="fu">getTimeInMillis</span>()
+             - human.<span class="fu">dOB</span>.<span class="fu">getTimeInMillis</span>())/<span class="dv">1000</span>;
+        Integer ageDays = (<span class="dt">int</span>)diffSeconds/(<span class="dv">60</span>*<span class="dv">60</span>*<span class="dv">24</span>);
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;This human is &quot;</span> + ageDays + <span class="st">&quot; days old&quot;</span>);   
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Dog dog) {
+        Integer ageDays = dog.<span class="fu">ageYears</span> * <span class="dv">365</span>;
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;This dog is &quot;</span> + ageDays + <span class="st">&quot; days old&quot;</span>);
+    }
+}</code></pre></div>
+<h2 id="visitor-pattern---examples-5">Visitor pattern - examples</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.*;</span>
+<span class="kw">public</span> <span class="kw">class</span> TestVisitor {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Dog d = <span class="kw">new</span> <span class="fu">Dog</span>(<span class="dv">5</span>);
+        Calendar cal = <span class="kw">new</span> GregorianCalendar();
+        cal.<span class="fu">set</span>(<span class="dv">1995</span>,<span class="dv">5</span>,<span class="dv">12</span>);
+        Human h = <span class="kw">new</span> <span class="fu">Human</span>(cal);
+        CompAgeDaysVisitor c = <span class="kw">new</span> <span class="fu">CompAgeDaysVisitor</span>();
+        d.<span class="fu">accept</span>(c);
+        h.<span class="fu">accept</span>(c);
+    }
+}</code></pre></div>
+<ul>
+<li>Method is invoked by calling <code>accept</code> on the original objects</li>
+</ul>
+<h2 id="visitor-pattern---summary">Visitor pattern - summary</h2>
+<ul>
+<li>In our example, we call the method by invoking <code>accept</code></li>
+<li>This calls the relevant <code>visit</code> method for the object of interest</li>
+<li>We could now write more visitors for these objects without changing them at all</li>
+<li>e.g. <code>DisplayStuffVisitor</code> can be called via:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    DisplayStuffVisitor dS = <span class="kw">new</span> <span class="fu">DisplayStuffVisitor</span>();
+    d.<span class="fu">accept</span>(dS);
+    h.<span class="fu">accept</span>(dS);
+    <span class="co">// Or e.g. </span>
+    d.<span class="fu">accept</span>(<span class="kw">new</span> <span class="fu">DisplayStuffVisitor</span>());</code></pre></div>
+<h2 id="visitor-pattern---displaystuffvisitor">Visitor pattern - <code>DisplayStuffVisitor</code></h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> DisplayStuffVisitor <span class="kw">implements</span> MyVisitor {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Dog dog) {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;This is some stuff about dogs. They have 4 legs.&quot;</span>);
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Human human) {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;This is some stuff about humans. They have 2 legs.&quot;</span>);
+    }
+}</code></pre></div>
+<h2 id="the-proxy-pattern">The Proxy pattern</h2>
+<ul>
+<li>The proxy pattern defines wrapper classes that act as interfaces (in a general sense) to other classes</li>
+<li>Useful for e.g.
+<ul>
+<li><em>Simplicity:</em> can make a simpler API for complex objects (and standardise for different objects)</li>
+<li><em>Remote resources:</em> make remote objects look like local objects (e.g. <code>Socket</code>)</li>
+<li><em>Streamlining</em>: can stop big computations happening if they are unnecessary</li>
+<li><em>Security</em>: adding security checks to an object</li>
+</ul></li>
+</ul>
+<h2 id="proxy---example">Proxy - example</h2>
+<ul>
+<li>From <a href="http://en.wikipedia.org/wiki/Proxy_pattern">wikipedia</a></li>
+<li>Class <code>RealImage</code> loads and displays images</li>
+<li>Assume that loading is time and memory consuming and therefore we only load if we definitely need to display
+<ul>
+<li>Displaying might not always be necessary</li>
+</ul></li>
+<li><code>ProxyImage</code> wraps <code>RealImage</code> and only creates the <code>RealImage</code> option when <code>display</code> is called</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">interface</span> Image {
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">displayImage</span>();
+}</code></pre></div>
+<h2 id="proxy---example-1">Proxy - example</h2>
+<ul>
+<li>RealImage:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RealImage <span class="kw">implements</span> Image{
+    <span class="kw">private</span> String filename = <span class="kw">null</span>;
+    <span class="kw">public</span> <span class="fu">RealImage</span>(<span class="dt">final</span> String filename) {
+        <span class="kw">this</span>.<span class="fu">filename</span> = filename;
+        <span class="fu">loadImageFromDisk</span>();
+    }
+    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">loadImageFromDisk</span>() {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Loading &quot;</span> + filename);
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">displayImage</span>() {
+        System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Displaying &quot;</span> + filename);
+    }
+}</code></pre></div>
+<h2 id="proxy---example-2">Proxy - example</h2>
+<ul>
+<li>ProxyImage:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> ProxyImage <span class="kw">implements</span> Image{
+    <span class="kw">private</span> String filename = <span class="kw">null</span>;
+    <span class="kw">private</span> RealImage image = <span class="kw">null</span>;
+    <span class="kw">public</span> <span class="fu">ProxyImage</span>(<span class="dt">final</span> String filename) {
+        <span class="kw">this</span>.<span class="fu">filename</span> = filename;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">displayImage</span>() {
+        <span class="kw">if</span> (image == <span class="kw">null</span>) {
+            image = <span class="kw">new</span> <span class="fu">RealImage</span>(filename);
+        }
+        image.<span class="fu">displayImage</span>();
+    }
+}</code></pre></div>
+<h2 id="proxy---example-3">Proxy - example</h2>
+<ul>
+<li>Test code:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> ProxyImage <span class="kw">implements</span> Image{
+    <span class="kw">private</span> String filename = <span class="kw">null</span>;
+    <span class="kw">private</span> RealImage image = <span class="kw">null</span>;
+    <span class="kw">public</span> <span class="fu">ProxyImage</span>(<span class="dt">final</span> String filename) {
+        <span class="kw">this</span>.<span class="fu">filename</span> = filename;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">displayImage</span>() {
+        <span class="kw">if</span> (image == <span class="kw">null</span>) {
+            image = <span class="kw">new</span> <span class="fu">RealImage</span>(filename);
+        }
+        image.<span class="fu">displayImage</span>();
+    }
+}</code></pre></div>
+<h2 id="the-decorator-pattern">The decorator pattern</h2>
+<ul>
+<li>The <code>decorator</code> pattern allows us to add functionality to existing objects without having to add it to all objects of that class (as would be the case if we simply put the methods into the class definition)</li>
+<li>Consider the followning <code>BasicCar</code> object to some instants of which, we'd like to add extras (CD player, alloys, etc):</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> BasicCar {
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">getPrice</span>() {
+        <span class="kw">return</span> <span class="dv">10000</span>;
+    }
+    <span class="kw">public</span> String <span class="fu">getDescription</span>() {
+        <span class="kw">return</span> <span class="st">&quot;The basic car&quot;</span>
+    }
+}</code></pre></div>
+<h2 id="the-decorator-pattern-1">The decorator pattern</h2>
+<ul>
+<li>The first step is to define an abstract class that both <code>BasicCar</code> and our decorators will extend:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> Car {
+    <span class="kw">public</span> <span class="kw">abstract</span> <span class="dt">double</span> <span class="fu">getPrice</span>();
+    <span class="kw">public</span> <span class="kw">abstract</span> String <span class="fu">getDescription</span>();
+}</code></pre></div>
+<ul>
+<li><code>BasicCar</code> now <code>extends</code> <code>Car</code></li>
+<li>Decorators will add functionality to this by implementing these methods slightly differently to <code>BasicCar</code></li>
+</ul>
+<h2 id="the-decorator-pattern-2">The decorator pattern</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> CarDecorator <span class="kw">extends</span> Car {
+    <span class="kw">protected</span> Car decoratedCar;
+    <span class="kw">public</span> <span class="fu">CarDecorator</span>(Car decoratedCar) {
+        <span class="kw">this</span>.<span class="fu">decoratedCar</span> = decoratedCar;
+    }
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">getPrice</span>() {
+        <span class="kw">return</span> decoratedCar.<span class="fu">getPrice</span>();
+    }
+    <span class="kw">public</span> String <span class="fu">getDescription</span>() {
+        <span class="kw">return</span> decoratedCar.<span class="fu">getDescription</span>();
+    }
+}</code></pre></div>
+<ul>
+<li>By default, the methods just call the methods on the object coming in</li>
+<li>We can now build a concrete decorator</li>
+</ul>
+<h2 id="the-decorator-pattern-3">The decorator pattern</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> AlloyDecorator <span class="kw">extends</span> CarDecorator {
+    <span class="kw">public</span> <span class="fu">AlloyDecorator</span> (Car decoratedCar) {
+        <span class="kw">super</span>(decoratedCar); <span class="co">// Call the CarDecorator constructor</span>
+    }
+    <span class="kw">public</span> Double <span class="fu">getPrice</span>() {
+        <span class="kw">return</span> <span class="kw">super</span>.<span class="fu">getPrice</span>() + <span class="dv">250</span>; <span class="co">// Add the price of alloys</span>
+    }
+    <span class="kw">public</span> String <span class="fu">getDescription</span>() {
+        <span class="kw">return</span> <span class="kw">super</span>.<span class="fu">getDescription</span>() + <span class="st">&quot; + Alloys&quot;</span>; 
+    }
+}</code></pre></div>
+<ul>
+<li>Adds alloys to the basic car</li>
+</ul>
+<h2 id="the-decorator-pattern-4">The decorator pattern</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> CDDecorator <span class="kw">extends</span> CarDecorator {
+    <span class="kw">public</span> <span class="fu">CDDecorator</span> (Car decoratedCar) {
+        <span class="kw">super</span>(decoratedCar); <span class="co">// Call the CarDecorator constructor</span>
+    }
+    <span class="kw">public</span> Double <span class="fu">getPrice</span>() {
+        <span class="kw">return</span> <span class="kw">super</span>.<span class="fu">getPrice</span>() + <span class="dv">150</span>; <span class="co">// Add the price of alloys</span>
+    }
+    <span class="kw">public</span> String <span class="fu">getDescription</span>() {
+        <span class="kw">return</span> <span class="kw">super</span>.<span class="fu">getDescription</span>() + <span class="st">&quot; + CD Player&quot;</span>; 
+    }
+}</code></pre></div>
+<ul>
+<li>Adds a CD player</li>
+</ul>
+<h2 id="the-decorator-pattern-5">The decorator pattern</h2>
+<ul>
+<li>See <code>DecoratorTest</code></li>
+</ul>
+<h2 id="the-observer-pattern">The observer pattern</h2>
+<ul>
+<li>Our final pattern is the <code>observer</code></li>
+<li>It is useful when our program has a class (the <code>Subject</code>) containing some kind of <em>state</em> that might be required by various other classes</li>
+<li>The <code>observer</code> ensures that they are all updated whenever the <code>Subject</code> is updated</li>
+<li>We define the following classes
+<ul>
+<li>The <code>Subject</code> -- the class containing the state of the system</li>
+<li>The <code>Observer</code> -- an abstract class that will be extended by concrete observers</li>
+<li>Concrete observers (potentially several)</li>
+</ul></li>
+</ul>
+<h2 id="the-decorator-pattern-6">The decorator pattern</h2>
+<ul>
+<li>Example: our <code>Subject</code> class will contain an array of <code>Double</code> values</li>
+<li>We will create concrete <code>observers</code> that display all of the data, or the mean of the data, (or the max, or the min, ...)</li>
+</ul>
+<h2 id="the-subject"> The Subject</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> Subject {
+    <span class="kw">private</span> ArrayList&lt;Observer&gt; observers = <span class="kw">new</span> ArrayList&lt;Observer&gt;();
+    <span class="kw">private</span> Double[] data;
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setData</span>(Double[] data) {
+        <span class="kw">this</span>.<span class="fu">data</span> = data;
+        <span class="kw">this</span>.<span class="fu">notifyAllObservers</span>();
+        }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">attach</span>(Observer observer) { <span class="kw">this</span>.<span class="fu">observer</span> = observer;}
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">notifyAllObservers</span>() {
+        <span class="kw">for</span>(Observer observer : observers) { 
+            observer.<span class="fu">notifyMe</span>();
+            }
+        }
+}</code></pre></div>
+<h2 id="abstract-observer">Abstract Observer</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> Observer {
+        <span class="kw">protected</span> Subject subject;
+        <span class="kw">public</span> <span class="kw">abstract</span> <span class="dt">void</span> <span class="fu">notifyMe</span>();
+    }</code></pre></div>
+<h2 id="concrete-list-data-observer">Concrete list data observer</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="kw">class</span> ListDataObserver <span class="kw">extends</span> Observer {
+        <span class="kw">public</span> <span class="fu">ListDatabObserver</span>(Subject subject) {
+            <span class="kw">this</span>.<span class="fu">subject</span> = subject;
+            <span class="kw">this</span>.<span class="fu">subject</span>.<span class="fu">attach</span>(<span class="kw">this</span>);
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">notifyMe</span>() {
+            Double[] data = subject.<span class="fu">getData</span>();
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;data.<span class="fu">length</span>;i++) {
+                System.<span class="fu">out</span>.<span class="fu">println</span>(data[i]);
+            }
+        }
+    }</code></pre></div>
+<h2 id="concrete-mean-data-observer">Concrete mean data observer</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="kw">class</span> MeanDataObserver <span class="kw">extends</span> Observer {
+        <span class="kw">public</span> <span class="fu">ListDatabObserver</span>(Subject subject) {
+            <span class="kw">this</span>.<span class="fu">subject</span> = subject;
+            <span class="kw">this</span>.<span class="fu">subject</span>.<span class="fu">attach</span>(<span class="kw">this</span>);
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">notifyMe</span>() {
+            Double[] data = subject.<span class="fu">getData</span>();
+            Double mean = <span class="fl">0.0</span>;
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;data.<span class="fu">length</span>;i++) {
+                mean += data[i];
+            }
+            mean = mean / data.<span class="fu">length</span>;
+            System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Mean: &quot;</span> + mean);
+        }
+    }</code></pre></div>
+<h2 id="observer-pattern">Observer pattern</h2>
+<ul>
+<li>ObserverTest.java</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="kw">class</span> ObserverTest {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+        Subject s = <span class="kw">new</span> Subject();
+        Double[] d = <span class="kw">new</span> Double[<span class="dv">5</span>];
+        d[<span class="dv">0</span>] = <span class="fl">1.0</span>;d[<span class="dv">1</span>] = <span class="fl">1.2</span>;d[<span class="dv">2</span>] = <span class="fl">1.4</span>;d[<span class="dv">3</span>] = <span class="fl">1.7</span>;d[<span class="dv">4</span>] = <span class="fl">2.4</span>;
+        <span class="kw">new</span> <span class="fu">ListDataObserver</span>(s);
+        <span class="kw">new</span> <span class="fu">MeanDataObserver</span>(s);
+        s.<span class="fu">setData</span>(d);
+        d[<span class="dv">3</span>] = <span class="fl">3.2</span>;
+        s.<span class="fu">setData</span>(d);
+    }
+}</code></pre></div>
+</body>
+</html>
