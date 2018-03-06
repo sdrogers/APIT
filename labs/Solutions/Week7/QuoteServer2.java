@@ -9,6 +9,7 @@ import java.util.Random;
 public class QuoteServer2 {
 	public static final int PORT = 8765;
 	public static ArrayList<String> quoteList = QuoteLoader.loadQuotes("quotes.txt");
+	
 	public static class Handler extends Thread{
 		private final Socket client;
 		private final Random r = new Random();

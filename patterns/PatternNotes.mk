@@ -189,7 +189,7 @@ endnotesonly
 - Useful in any application where objects can be in a hierarchy.
 - What would we need to do to allow composites of composites?
 
-## Factory methods and The factory pattern
+## Factory methods
 
 - Note that factories blur the line of what is and isn't a pattern, depending on their use. Doesn't matter though, they can be useful however you use them!
 - Most objects are created via a call to new, which calls the `constructor`

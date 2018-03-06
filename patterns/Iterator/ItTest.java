@@ -37,7 +37,9 @@ public class ItTest implements Iterator,Iterable<Integer>{
 		Integer[] a = {1,2,3,4};
 		ItTest c = new ItTest(a);
 		for(Integer b: c) {
-			System.out.println(b);
+			for(Integer d: c) {
+				System.out.println("" + b + " " + d);
+			}
 		}
 		// for(Integer b: c) {
 		// 	System.out.println(b);
