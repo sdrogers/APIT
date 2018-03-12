@@ -10,6 +10,10 @@ public class DecoratorTest {
 		System.out.println("Car costs " + cd.getPrice() + " and has " + cd.getDescription());	
 
 		Car all = new CDDecorator(new AlloyDecorator(new BasicCar()));
-		System.out.println("Car costs " + all.getPrice() + " and has " + all.getDescription());					
+		System.out.println("Car costs " + all.getPrice() + " and has " + all.getDescription());
+
+		Car cd2 = new CDDecorator(new LuxuryCar());
+		System.out.println("Car costs " + cd2.getPrice() + " and has " + cd2.getDescription());	
+
 	}
 }

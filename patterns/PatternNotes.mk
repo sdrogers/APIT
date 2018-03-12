@@ -616,7 +616,7 @@ public class CDDecorator extends CarDecorator {
  	- The `Observer` -- an abstract class that will be extended by concrete observers
  	- Concrete observers (potentially several)
 
-## The decorator pattern
+## The observer pattern
 
  - Example: our `Subject` class will contain an array of `Double` values
  - We will create concrete `observers` that display all of the data, or the mean of the data, (or the max, or the min, ...)

@@ -18,5 +18,6 @@ public class CompositeExample {
 		System.out.println(pencil + " costs " + pencil.compPrice(myDiscount));
 		System.out.println(notebook + " costs " + notebook.compPrice(myDiscount));
 		System.out.println(backToSchool + " costs " + backToSchool.compPrice(myDiscount));
+
 	}
 }
