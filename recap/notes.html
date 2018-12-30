@@ -83,7 +83,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#hashset">HashSet</a></li>
 <li><a href="#hashmap">HashMap</a></li>
 </ul></li>
-<li><a href="#hashing">Hashing</a></li>
+<li><a href="#hashing">Hashing</a><ul>
+<li><a href="#collisions"> Collisions</a></li>
+<li><a href="#hashcode"><code>hashCode()</code></a></li>
+</ul></li>
 <li><a href="#generics">Generics</a><ul>
 <li><a href="#arraylist-1"> ArrayList</a></li>
 <li><a href="#creating-generic-objects">Creating generic objects</a></li>
@@ -726,9 +729,155 @@ a.<span class="fu">add</span>(<span class="dv">5</span>);
 }</code></pre></div>
 <ul>
 <li>This is much quicker as we can jump directly to the correct array position.</li>
-<li>This is a simple example of <em>hashing</em></li>
-<li></li>
+<li>It is a simple example of <em>hashing</em></li>
+<li>In general, hashing is a way of mapping an object to a position in an array that enables finding it quickly</li>
+<li>A <em>hash function</em> is the function used to map from the object to the position</li>
+<li>In this example, the object is a <code>String</code> and the function simply computes its length</li>
 </ul>
+<hr />
+<h2 id="collisions"> Collisions</h2>
+<ul>
+<li>What will happen if we have two names of the same length?</li>
+<li>A <em>collision</em>, and our simple program will fail</li>
+<li>Solution: maintain a list at each array position</li>
+<li><code>PhoneBook3.java</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">import</span><span class="im"> java.util.ArrayList;</span>
+<span class="kw">public</span> <span class="kw">class</span> PhoneBook3 {
+
+    <span class="co">// Inner class that holds one array entry...</span>
+    <span class="kw">private</span> <span class="kw">class</span> PhoneList {
+        <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; names = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+        <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; numbers = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name,<span class="bu">String</span> number) {
+            names.<span class="fu">add</span>(name);
+            numbers.<span class="fu">add</span>(number);
+        }
+        <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;names.<span class="fu">size</span>();i++) {
+                <span class="kw">if</span>(names.<span class="fu">get</span>(i).<span class="fu">equals</span>(name)) {
+                    <span class="kw">return</span> numbers.<span class="fu">get</span>(i);
+                }
+            }
+            <span class="kw">return</span> <span class="st">&quot;&quot;</span>;
+        }
+    }
+    <span class="kw">private</span> PhoneList[] mainList = <span class="kw">new</span> PhoneList[<span class="dv">15</span>];
+    <span class="kw">public</span> <span class="fu">PhoneBook3</span>() {
+        <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>;i&lt;<span class="dv">15</span>;i++) {
+            mainList[i] = <span class="kw">new</span> <span class="fu">PhoneList</span>();
+        }
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name, <span class="bu">String</span> number) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>();
+        mainList[l].<span class="fu">addEntry</span>(name, number);
+    }
+    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>();
+        <span class="kw">return</span>  mainList[l].<span class="fu">getNumber</span>(name);
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        PhoneBook3 p = <span class="kw">new</span> <span class="fu">PhoneBook3</span>();
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Simon&quot;</span>, <span class="st">&quot;0777777777&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Jennifer&quot;</span>, <span class="st">&quot;0666677889&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ravi&quot;</span>, <span class="st">&quot;056782776&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ken&quot;</span>, <span class="st">&quot;0447838827&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Hannah&quot;</span>, <span class="st">&quot;066848382&quot;</span>);
+
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getNumber</span>(<span class="st">&quot;Ravi&quot;</span>));
+    }
+}</code></pre></div>
+<ul>
+<li>Final problem is what to do if a name is longer than 15?</li>
+<li>Solution:
+<ul>
+<li>Fix the max length of array (e.g. 6)</li>
+<li>Store entries in the position length % 6</li>
+<li><code>PhoneBook4.java</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">import</span><span class="im"> java.util.ArrayList;</span>
+<span class="kw">public</span> <span class="kw">class</span> PhoneBook4 {
+
+    <span class="co">// Inner class that holds one array entry...</span>
+    <span class="kw">private</span> <span class="kw">class</span> PhoneList {
+        <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; names = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+        <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; numbers = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name,<span class="bu">String</span> number) {
+            names.<span class="fu">add</span>(name);
+            numbers.<span class="fu">add</span>(number);
+        }
+        <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+            <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;names.<span class="fu">size</span>();i++) {
+                <span class="kw">if</span>(names.<span class="fu">get</span>(i).<span class="fu">equals</span>(name)) {
+                    <span class="kw">return</span> numbers.<span class="fu">get</span>(i);
+                }
+            }
+            <span class="kw">return</span> <span class="st">&quot;&quot;</span>;
+        }
+    }
+    <span class="kw">private</span> PhoneList[] mainList = <span class="kw">new</span> PhoneList[<span class="dv">15</span>];
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">int</span> MAX_LENGTH = <span class="dv">6</span>; <span class="co">// Change here...</span>
+    <span class="kw">public</span> <span class="fu">PhoneBook3</span>() {
+        <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>;i&lt;MAX_LENGTH;i++) {
+            mainList[i] = <span class="kw">new</span> <span class="fu">PhoneList</span>();
+        }
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name, <span class="bu">String</span> number) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>() % MAX_LENGTH; <span class="co">// Change here...</span>
+        mainList[l].<span class="fu">addEntry</span>(name, number);
+    }
+    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>() % MAX_LENGTH; <span class="co">// Change here...</span>
+        <span class="kw">return</span>  mainList[l].<span class="fu">getNumber</span>(name);
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        PhoneBook3 p = <span class="kw">new</span> <span class="fu">PhoneBook3</span>();
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Simon&quot;</span>, <span class="st">&quot;0777777777&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Jennifer&quot;</span>, <span class="st">&quot;0666677889&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ravi&quot;</span>, <span class="st">&quot;056782776&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ken&quot;</span>, <span class="st">&quot;0447838827&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Hannah&quot;</span>, <span class="st">&quot;066848382&quot;</span>);
+
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getNumber</span>(<span class="st">&quot;Ravi&quot;</span>));
+    }
+}</code></pre></div>
+<ul>
+<li>This is the basics of hashing</li>
+<li>Length isn't a great hash function
+<ul>
+<li>Want something that will spread the objects fairly evenly over the array</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="hashcode"><code>hashCode()</code></h2>
+<ul>
+<li>All objects have a <code>hashCode()</code> method</li>
+<li>Here's equivalent code to Java's <code>String</code> hashCode function:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">int</span> <span class="fu">hashCode</span>() {
+  <span class="dt">int</span> hash = <span class="dv">0</span>;
+  <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; <span class="fu">length</span>(); i++) {
+    hash = hash * <span class="dv">31</span> + <span class="fu">charAt</span>(i);
+  }
+  <span class="kw">return</span> hash;
+}</code></pre></div>
+<hr />
+<ul>
+<li>You can overwrite <code>hashCode()</code> for your own objects</li>
+<li>By default the hashCode returns (roughly) the memory location of the object</li>
+<li>Note:
+<ul>
+<li>Two objects that are <code>equal</code> <em>must</em> have the same hash.</li>
+<li>I.e. if <code>obj1.equals(obj2)</code> then <code>obj1.hashCode()</code> must equal <code>obj2.hashCode()</code></li>
+<li>Why? Think about our hashing examples...</li>
+</ul></li>
+</ul>
+<hr />
 <h1 id="generics">Generics</h1>
 <h2 id="arraylist-1"> ArrayList</h2>
 <ul>
@@ -882,8 +1031,6 @@ a.<span class="fu">add</span>(<span class="dv">5</span>);
 <li>Standard comments <code>//</code> <code>/*</code> are good</li>
 <li>Javadoc is better!</li>
 <li>[This]{http://agile.csc.ncsu.edu/SEMaterials/tutorials/javadoc/} is quite a good tutorial</li>
-<li>See <code>MyMath</code> in <code>JavaDoc</code> directory</li>
-<li>Compile with <code>javadoc MyMath.java</code> and open <code>index.html</code></li>
 </ul>
 <hr />
 <h1 id="things-we-are-not-covering-here">Things we are not covering here</h1>
