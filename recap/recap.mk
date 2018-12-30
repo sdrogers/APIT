@@ -1,10 +1,10 @@
 % APIT - Java recap etc
 % Dr. Simon Rogers
-% 14/11/2014
+% 29/12/2018
 
 # Overview
 
-- Programming
+- Introduction
 - Objects, interfaces etc
 - Immutable objects
 - Call by reference / value
@@ -17,47 +17,6 @@
 
 # Programming
 
-## Your experience
-
-- How many people had their first experience of programming in S1?
-- What other languages have you used?
-- What programming tools have you used?
-- How many of you know what the following things are:
-	- Objects?
-	- Functions?
-	- Stacks? Queues? Linked lists? Arrays?
-	- Regular Expressions?
-
-----
-
-
-## High v low -level languages
-
-- Computers follow instructions in *machine code*
-	- binary...quite hard for humans to read
-	- not *that* long ago, humans had to program computers like this (some academics in SoCS will remember...)
-	- Machine code is *low level*
-- At the other extreme, *high level* languages are eas(y,ier) for humans to read
-	- Java is a fairly *high level* language
-
-----
-
-
-## Compiled v Interpreted v Java
-
-- Computers run programs in Machine Code
-	- Low level language. Not human readable
-- Some languages require programs to be *compiled* into Machine Code
-	- e.g. C++
-- Some languages are interpreted line by line as they are run
-	- e.g. Matlab
-- Java is a bit different
-	- It is compiled into Bytecode
-	- Bytecode is run on the Java Virtual Machine
-	- What is a virtual machine?
-
-----
-
 ## Compiling and running Java from the command line
 
 - I will do this in class
@@ -65,6 +24,8 @@
 	- Compiling: `javac MyClass.java`
 	- Running: `java MyClass`
 - We will see some more complex examples throughout the course
+- Feel free to use Eclipse if you prefer
+- Also, Visual Studio Code...
 
 ----
 
@@ -74,16 +35,6 @@
 - For larger projects, it is important to organise all your files in a standard manner
 	- Eclipse does this automatically
 - If you want to do it manually, good description is available [here](http://cs.lmu.edu/~ray/notes/largejavaapps/)
-
-----
-
-# Object Orientation
-
-- Java is an *Object Oriented* language
-- What are objects?
-- Why program with objects?
-- Why not program with objects?
-- [Homework: read this](http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html)
 
 ----
 
@@ -129,28 +80,6 @@
 - Note:
 	- Classes can only sub-class one class...
 	- ...but can implement many interfaces
-
-----
-
-## Exercise: measurement with units
-
->You are working in a team building a system to work with GPS data (from e.g. a running watch). Your task is to create the part of the code to deal with distance values, that can be stored in a number of different units (metres, kilometers, miles, etc). Objects with different units have to be able to be compared (for e.g. sorting).
-
-- Can you think of a way of doing this with a single class (e.g. `UnitDistance` that stores the distance as a double and an object representing the unit). You'll need an interface somewhere...
-- My solution in `recap/code/UnitDistance`
-- Could you solve this with an abstract class instead of an interface? How?
-
-
-----
-
-notesonly
-
-To help understand this exercise, think about what `unit` objects need to **do**. Interfaces define the methods that objects must pefform, i.e. the things they must be able to do. In this example, a unit needs to be able to convert a value into some standard (i.e. for distances, we convert everything to metres) and provide a string for displaying (e.g. m, km, ft).
-
-In my solution there is another example of interfaces: `Comparable`, which you saw in semester 1, that allows, e.g., objects in an array to be sorted.
-
-
-endnotesonly
 
 # Some odds and ends
 
@@ -613,6 +542,269 @@ endnotesonly
 
 ----
 
+# Hashing
+
+- Hashing solves the problem of *efficiently* finding items in some collection
+- We'll use the example of storing a phonebook. E.g. we want to store the following:
+	- Simon, 0777777777
+ 	- Jennifer, 0666677889
+ 	- Ravi, 056782776
+ 	- Ken, 0447838827
+ 	- Hannah, 066848382
+
+----
+
+- The simplest solution would be to create two arrays (forget the problem of parallel arrays for now)
+- Then, to find the number for a particular person, we loop through the array of names
+- `PhoneBook1.java`
+
+----
+
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook1 {
+    private ArrayList<String> names;
+    private ArrayList<String> numbers;
+    public PhoneBook1() {
+        names = new ArrayList<String>();
+        numbers = new ArrayList<String>();
+    }    
+    public void addEntry(String name, String number) {
+        names.add(name);
+        numbers.add(number);
+    }
+    public String getNumber(String name) {
+        for(int i=0;i<names.size();i++) {
+            if(names.get(i).equals(name)) {
+                return numbers.get(i);
+            }
+        }
+        return ""; // If name doesn't exist
+    }
+
+    public static void main(String[] args) {
+        PhoneBook1 p = new PhoneBook1();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
+
+- In general looping over all entries will be slow (if lots of entries)
+- A solution:
+	- Assume no name longer than 15 characters
+	- Create two arrays as before
+	- Store the name and number in the nth position, where n = length of the name
+	- `PhoneBook2.java`
+
+notesonly
+
+~~~~{.java}
+
+public class PhoneBook2 {
+    private String[] names = new String[15];
+    private String[] numbers = new String[15];
+    public void addEntry(String name,String number) {
+        int l = name.length();
+        names[l] = name;
+        numbers[l] = number;
+    }
+    public String getNumber(String name) {
+        int l = name.length();
+        return numbers[l];
+    }
+
+    public static void main(String[] args) {
+        PhoneBook2 p = new PhoneBook2();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
+
+- This is much quicker as we can jump directly to the correct array position.
+- It is a simple example of *hashing*
+- In general, hashing is a way of mapping an object to a position in an array that enables finding it quickly
+- A *hash function* is the function used to map from the object to the position
+- In this example, the object is a `String` and the function simply computes its length
+
+----
+
+## Collisions
+
+- What will happen if we have two names of the same length?
+- A *collision*, and our simple program will fail
+- Solution: maintain a list at each array position
+- `PhoneBook3.java`
+
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook3 {
+
+    // Inner class that holds one array entry...
+    private class PhoneList {
+        private ArrayList<String> names = new ArrayList<String>();
+        private ArrayList<String> numbers = new ArrayList<String>();
+        public void addEntry(String name,String number) {
+            names.add(name);
+            numbers.add(number);
+        }
+        public String getNumber(String name) {
+            for(int i=0;i<names.size();i++) {
+                if(names.get(i).equals(name)) {
+                    return numbers.get(i);
+                }
+            }
+            return "";
+        }
+    }
+    private PhoneList[] mainList = new PhoneList[15];
+    public PhoneBook3() {
+        for(int i = 0;i<15;i++) {
+            mainList[i] = new PhoneList();
+        }
+    }
+    public void addEntry(String name, String number) {
+        int l = name.length();
+        mainList[l].addEntry(name, number);
+    }
+    public String getNumber(String name) {
+        int l = name.length();
+        return  mainList[l].getNumber(name);
+    }
+
+    public static void main(String[] args) {
+        PhoneBook3 p = new PhoneBook3();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
+
+- Final problem is what to do if a name is longer than 15?
+- Solution:
+	- Fix the max length of array (e.g. 6)
+	- Store entries in the position length % 6
+	- `PhoneBook4.java`
+
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook4 {
+
+    // Inner class that holds one array entry...
+    private class PhoneList {
+        private ArrayList<String> names = new ArrayList<String>();
+        private ArrayList<String> numbers = new ArrayList<String>();
+        public void addEntry(String name,String number) {
+            names.add(name);
+            numbers.add(number);
+        }
+        public String getNumber(String name) {
+            for(int i=0;i<names.size();i++) {
+                if(names.get(i).equals(name)) {
+                    return numbers.get(i);
+                }
+            }
+            return "";
+        }
+    }
+    private PhoneList[] mainList = new PhoneList[15];
+    private static final int MAX_LENGTH = 6; // Change here...
+    public PhoneBook3() {
+        for(int i = 0;i<MAX_LENGTH;i++) {
+            mainList[i] = new PhoneList();
+        }
+    }
+    public void addEntry(String name, String number) {
+        int l = name.length() % MAX_LENGTH; // Change here...
+        mainList[l].addEntry(name, number);
+    }
+    public String getNumber(String name) {
+        int l = name.length() % MAX_LENGTH; // Change here...
+        return  mainList[l].getNumber(name);
+    }
+
+    public static void main(String[] args) {
+        PhoneBook3 p = new PhoneBook3();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
+
+- This is the basics of hashing
+- Length isn't a great hash function
+	- Want something that will spread the objects fairly evenly over the array
+
+----
+
+## `hashCode()`
+
+- All objects have a `hashCode()` method
+- Here's equivalent code to Java's `String` hashCode function:
+
+~~~~{.java}
+public int hashCode() {
+  int hash = 0;
+  for (int i = 0; i < length(); i++) {
+    hash = hash * 31 + charAt(i);
+  }
+  return hash;
+}
+~~~~
+
+----
+
+- You can overwrite `hashCode()` for your own objects
+- By default the hashCode returns (roughly) the memory location of the object
+- Note:
+	- Two objects that are `equal` *must* have the same hash.
+	- I.e. if `obj1.equals(obj2)` then `obj1.hashCode()` must equal `obj2.hashCode()` 
+	- Why? Think about our hashing examples...
+
+----
+
 # Generics
 
 ## ArrayList
@@ -680,19 +872,8 @@ public class DictionaryTest {
 
 endnotesonly
 
-----
 
 # Testing
-
-## Debugging
-
-- In semester 1 you learnt to use the Eclipse debugger
-- There is more to testing than debugging
-- In real development projects, many people are wholly devoted to testing
-- Black box, white box
-- Unit testing...
-
-----
 
 ## Unit testing
 
@@ -707,6 +888,7 @@ endnotesonly
 - `JUnit` is a popular Java unit test framework
 - A *test class* is created for each normal class
 - We can then run `JUnit` and it will automatically perform the tests
+- Easiest to do this directly in Eclipse
 
 ----
 
@@ -729,71 +911,10 @@ public class Pointless {
 
 ----
 
-## `PointlessTest.java`
-
-~~~~{.java}
-import org.junit.Test;
-import org.junit.Assert;
-public class PointlessTest {
-	private static final double EPSILON = 1e-12; 
-	@Test public void testIncrement()
-	{
-		Pointless p = new Pointless(1);
-		p.increment();
-		int expected = 2;
-		Assert.assertEquals(expected,p.getMyInt(),EPSILON);
-	}
-}
-~~~~
-
-----
-
-## Compiling
-
-- To compile `PointlessTest` we need `JUnit`
-	- You can do this in eclipse
-	- Or from the command line
-- On a mac:
-
-`javac -cp .:../JUnit/junit-4.12.jar PointlessTest.java`
-
-- `-cp` sets the *class path*
-	- In this case, '.' means current directory and `./JUnit/junit-4.12.jar` is where the `JUnit` `.jar` file is
-
-----
-
-## Running
-
-- Again, possible in Eclipse or from the command line
-- From command line (mac):
-
-`java -cp .:../JUnit/junit-4.12.jar:../JUnit/hamcrest-core-1.3.jar PointlessTest`
-
-- Result:
-
-~~~~
-JUnit version 4.12
-.
-Time: 0.004
-
-OK (1 test)
-~~~~
-
-----
-
-## `Pointless2.java`
-
-- We now add a doubling function
-- and write a new test case (`PointlessTest2.java`)
-- What happens?
-- Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)
-
-----
-
 ## Assertions
 
-- `JUnit` testing is done at compile time
-- We might also want runtime checks
+- Unit testing is done at compile time
+- We might also want *runtime* checks
 	- to catch runtime errors (e.g. based on input that is unknown at compile time)
 - The naive way is through the use of `if` statements
 
@@ -862,8 +983,6 @@ public class AssertionExample2 {
 - Standard comments `//` `/*` are good
 - Javadoc is better!
 - [This]{http://agile.csc.ncsu.edu/SEMaterials/tutorials/javadoc/} is quite a good tutorial
-- See `MyMath` in `JavaDoc` directory
-- Compile with `javadoc MyMath.java` and open `index.html`
 
 ----
 

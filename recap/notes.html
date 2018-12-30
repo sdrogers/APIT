@@ -50,24 +50,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">APIT - Java recap etc</h1>
 <h2 class="author">Dr. Simon Rogers</h2>
-<h3 class="date">14/11/2014</h3>
+<h3 class="date">29/12/2018</h3>
 </div>
 <div id="TOC">
 <ul>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#programming">Programming</a><ul>
-<li><a href="#your-experience">Your experience</a></li>
-<li><a href="#high-v-low--level-languages">High v low -level languages</a></li>
-<li><a href="#compiled-v-interpreted-v-java">Compiled v Interpreted v Java</a></li>
 <li><a href="#compiling-and-running-java-from-the-command-line">Compiling and running Java from the command line</a></li>
 <li><a href="#organising-projects">Organising projects</a></li>
-</ul></li>
-<li><a href="#object-orientation">Object Orientation</a><ul>
 <li><a href="#classes">Classes</a></li>
 <li><a href="#inheritance">Inheritance</a></li>
 <li><a href="#abstract-classes">Abstract Classes</a></li>
 <li><a href="#interfaces">Interfaces</a></li>
-<li><a href="#exercise-measurement-with-units"> Exercise: measurement with units</a></li>
 </ul></li>
 <li><a href="#some-odds-and-ends">Some odds and ends</a><ul>
 <li><a href="#public-private-and-protected"><code>public</code>, <code>private</code> and <code>protected</code></a></li>
@@ -89,19 +83,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#hashset">HashSet</a></li>
 <li><a href="#hashmap">HashMap</a></li>
 </ul></li>
+<li><a href="#hashing">Hashing</a></li>
 <li><a href="#generics">Generics</a><ul>
 <li><a href="#arraylist-1"> ArrayList</a></li>
 <li><a href="#creating-generic-objects">Creating generic objects</a></li>
 </ul></li>
 <li><a href="#testing">Testing</a><ul>
-<li><a href="#debugging">Debugging</a></li>
 <li><a href="#unit-testing">Unit testing</a></li>
 <li><a href="#junit"> JUnit</a></li>
 <li><a href="#pointless.java"><code>Pointless.java</code></a></li>
-<li><a href="#pointlesstest.java"><code>PointlessTest.java</code></a></li>
-<li><a href="#compiling">Compiling</a></li>
-<li><a href="#running">Running</a></li>
-<li><a href="#pointless2.java"><code>Pointless2.java</code></a></li>
 <li><a href="#assertions">Assertions</a></li>
 </ul></li>
 <li><a href="#javadoc">JavaDoc</a></li>
@@ -115,7 +105,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <h1 id="overview">Overview</h1>
 <ul>
-<li>Programming</li>
+<li>Introduction</li>
 <li>Objects, interfaces etc</li>
 <li>Immutable objects</li>
 <li>Call by reference / value</li>
@@ -126,56 +116,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <hr />
 <h1 id="programming">Programming</h1>
-<h2 id="your-experience">Your experience</h2>
-<ul>
-<li>How many people had their first experience of programming in S1?</li>
-<li>What other languages have you used?</li>
-<li>What programming tools have you used?</li>
-<li>How many of you know what the following things are:
-<ul>
-<li>Objects?</li>
-<li>Functions?</li>
-<li>Stacks? Queues? Linked lists? Arrays?</li>
-<li>Regular Expressions?</li>
-</ul></li>
-</ul>
-<hr />
-<h2 id="high-v-low--level-languages">High v low -level languages</h2>
-<ul>
-<li>Computers follow instructions in <em>machine code</em>
-<ul>
-<li>binary...quite hard for humans to read</li>
-<li>not <em>that</em> long ago, humans had to program computers like this (some academics in SoCS will remember...)</li>
-<li>Machine code is <em>low level</em></li>
-</ul></li>
-<li>At the other extreme, <em>high level</em> languages are eas(y,ier) for humans to read
-<ul>
-<li>Java is a fairly <em>high level</em> language</li>
-</ul></li>
-</ul>
-<hr />
-<h2 id="compiled-v-interpreted-v-java">Compiled v Interpreted v Java</h2>
-<ul>
-<li>Computers run programs in Machine Code
-<ul>
-<li>Low level language. Not human readable</li>
-</ul></li>
-<li>Some languages require programs to be <em>compiled</em> into Machine Code
-<ul>
-<li>e.g. C++</li>
-</ul></li>
-<li>Some languages are interpreted line by line as they are run
-<ul>
-<li>e.g. Matlab</li>
-</ul></li>
-<li>Java is a bit different
-<ul>
-<li>It is compiled into Bytecode</li>
-<li>Bytecode is run on the Java Virtual Machine</li>
-<li>What is a virtual machine?</li>
-</ul></li>
-</ul>
-<hr />
 <h2 id="compiling-and-running-java-from-the-command-line">Compiling and running Java from the command line</h2>
 <ul>
 <li>I will do this in class</li>
@@ -185,6 +125,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Running: <code>java MyClass</code></li>
 </ul></li>
 <li>We will see some more complex examples throughout the course</li>
+<li>Feel free to use Eclipse if you prefer</li>
+<li>Also, Visual Studio Code...</li>
 </ul>
 <hr />
 <h2 id="organising-projects">Organising projects</h2>
@@ -195,15 +137,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Eclipse does this automatically</li>
 </ul></li>
 <li>If you want to do it manually, good description is available <a href="http://cs.lmu.edu/~ray/notes/largejavaapps/">here</a></li>
-</ul>
-<hr />
-<h1 id="object-orientation">Object Orientation</h1>
-<ul>
-<li>Java is an <em>Object Oriented</em> language</li>
-<li>What are objects?</li>
-<li>Why program with objects?</li>
-<li>Why not program with objects?</li>
-<li><a href="http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html">Homework: read this</a></li>
 </ul>
 <hr />
 <h2 id="classes">Classes</h2>
@@ -260,19 +193,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>...but can implement many interfaces</li>
 </ul></li>
 </ul>
-<hr />
-<h2 id="exercise-measurement-with-units"> Exercise: measurement with units</h2>
-<blockquote>
-<p>You are working in a team building a system to work with GPS data (from e.g. a running watch). Your task is to create the part of the code to deal with distance values, that can be stored in a number of different units (metres, kilometers, miles, etc). Objects with different units have to be able to be compared (for e.g. sorting).</p>
-</blockquote>
-<ul>
-<li>Can you think of a way of doing this with a single class (e.g. <code>UnitDistance</code> that stores the distance as a double and an object representing the unit). You'll need an interface somewhere...</li>
-<li>My solution in <code>recap/code/UnitDistance</code></li>
-<li>Could you solve this with an abstract class instead of an interface? How?</li>
-</ul>
-<hr />
-<p>To help understand this exercise, think about what <code>unit</code> objects need to <strong>do</strong>. Interfaces define the methods that objects must pefform, i.e. the things they must be able to do. In this example, a unit needs to be able to convert a value into some standard (i.e. for distances, we convert everything to metres) and provide a string for displaying (e.g. m, km, ft).</p>
-<p>In my solution there is another example of interfaces: <code>Comparable</code>, which you saw in semester 1, that allows, e.g., objects in an array to be sorted.</p>
 <h1 id="some-odds-and-ends">Some odds and ends</h1>
 <h2 id="public-private-and-protected"><code>public</code>, <code>private</code> and <code>protected</code></h2>
 <ul>
@@ -409,7 +329,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li>It looks like we can change them?</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String a = <span class="st">&quot;hello&quot;</span>;
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span> a = <span class="st">&quot;hello&quot;</span>;
 a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 <ul>
 <li>But, Java is creating a new object and storing the reference in <code>a</code>
@@ -496,14 +416,14 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
         }
     }
     <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> DoubleClass {
-        Double a = <span class="fl">0.0</span>;
-        <span class="kw">public</span> <span class="fu">DoubleClass</span>(Double a) {
+        <span class="bu">Double</span> a = <span class="fl">0.0</span>;
+        <span class="kw">public</span> <span class="fu">DoubleClass</span>(<span class="bu">Double</span> a) {
             <span class="kw">this</span>.<span class="fu">a</span> = a;
         }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(<span class="bu">Double</span> m) {
             a = a * m;
         }
-        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+        <span class="kw">public</span> <span class="bu">Double</span> <span class="fu">getValue</span>() {
             <span class="kw">return</span> a;
         }
     }
@@ -511,38 +431,38 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
         in = <span class="kw">new</span> <span class="fu">MyClass</span>(<span class="dv">5</span>);
     }
 
-    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">stringTest</span>(String in) {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">stringTest</span>(<span class="bu">String</span> in) {
         in = in + <span class="st">&quot; added&quot;</span>;
-        System.<span class="fu">out</span>.<span class="fu">println</span>(in);
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(in);
     }
 
-    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">doubleTest</span>(Double in) {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">doubleTest</span>(<span class="bu">Double</span> in) {
         in = in * <span class="dv">2</span>;
     }
     <span class="kw">private</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">doubleObjectTest</span>(DoubleClass in) {
         in.<span class="fu">multiply</span>(<span class="fl">2.0</span>);
     }
 
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
         MyClass m = <span class="kw">new</span> <span class="fu">MyClass</span>(<span class="dv">3</span>);
         <span class="fu">aTest</span>(m);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(m.<span class="fu">getValue</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(m.<span class="fu">getValue</span>());
         <span class="co">// What value will be displayed?</span>
 
 
-        String s = <span class="st">&quot;hello&quot;</span>;
+        <span class="bu">String</span> s = <span class="st">&quot;hello&quot;</span>;
         <span class="fu">stringTest</span>(s);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(s);
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(s);
         <span class="co">// What will s be?</span>
 
-        Double d = <span class="fl">3.2</span>;
+        <span class="bu">Double</span> d = <span class="fl">3.2</span>;
         <span class="fu">doubleTest</span>(d);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d);
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d);
         <span class="co">// What will d be?</span>
 
         DoubleClass d2 = <span class="kw">new</span> <span class="fu">DoubleClass</span>(<span class="fl">3.2</span>);
         <span class="fu">doubleObjectTest</span>(d2);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getValue</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getValue</span>());
         <span class="co">// What will the value be?</span>
     }
 }</code></pre></div>
@@ -591,41 +511,41 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 </ul>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MutableNastiness {
     <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyDouble {
-        <span class="kw">private</span> Double a;
-        <span class="kw">public</span> <span class="fu">MyDouble</span>(Double a) {
+        <span class="kw">private</span> <span class="bu">Double</span> a;
+        <span class="kw">public</span> <span class="fu">MyDouble</span>(<span class="bu">Double</span> a) {
             <span class="kw">this</span>.<span class="fu">a</span> = a;
         }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(<span class="bu">Double</span> m) {
             a = a * m;
         }
-        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+        <span class="kw">public</span> <span class="bu">Double</span> <span class="fu">getValue</span>() {
             <span class="kw">return</span> a;
         }
     }
     <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> DoubleWrapper {
         <span class="kw">private</span> MyDouble d;
-        <span class="kw">public</span> <span class="fu">DoubleWrapper</span>(Double in) {
+        <span class="kw">public</span> <span class="fu">DoubleWrapper</span>(<span class="bu">Double</span> in) {
             <span class="kw">this</span>.<span class="fu">d</span> = <span class="kw">new</span> <span class="fu">MyDouble</span>(in);
         }
         <span class="kw">public</span> MyDouble <span class="fu">getMyDouble</span>() {
             <span class="kw">return</span> d;
         }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(Double m) {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(<span class="bu">Double</span> m) {
             d.<span class="fu">multiply</span>(m);
         }
-        <span class="kw">public</span> Double <span class="fu">getValue</span>() {
+        <span class="kw">public</span> <span class="bu">Double</span> <span class="fu">getValue</span>() {
             <span class="kw">return</span> d.<span class="fu">getValue</span>();
         }
     }
 
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
         <span class="co">// Create a Double object</span>
         DoubleWrapper dw = <span class="kw">new</span> <span class="fu">DoubleWrapper</span>(<span class="fl">3.2</span>);
         MyDouble d = dw.<span class="fu">getMyDouble</span>();
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
         d.<span class="fu">multiply</span>(<span class="fl">2.0</span>);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
-        System.<span class="fu">out</span>.<span class="fu">println</span>(dw.<span class="fu">getValue</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(dw.<span class="fu">getValue</span>());
     }
 }</code></pre></div>
 <p>In this example, <code>DoubleWrapper</code> is used to hold a <code>MyDouble</code> object. When we call <code>getMyDouble()</code> it returns the reference to its own <code>MyDouble</code> object. So, when we subsequently change that object, we are changing the object within <code>DoubleWrapper</code>. This is not good practice as it can result in unpredictable behaviour - someone else changes an object you rely on. To avoid this, try to only ever return immutable objects or new objects. For example, in <code>MutableNastinessFixed</code> the <code>getMyDouble()</code> method is changed to create a new object. Now, changes to the object returned do not change the original:</p>
@@ -648,34 +568,34 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 </ul>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> FinalTest {
     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="kw">class</span> Person {
-        <span class="kw">private</span> String name;
-        <span class="kw">private</span> Integer age;
-        <span class="kw">public</span> <span class="fu">Person</span>(String name,Integer age) {
+        <span class="kw">private</span> <span class="bu">String</span> name;
+        <span class="kw">private</span> <span class="bu">Integer</span> age;
+        <span class="kw">public</span> <span class="fu">Person</span>(<span class="bu">String</span> name,<span class="bu">Integer</span> age) {
             <span class="kw">this</span>.<span class="fu">name</span> = name;
             <span class="kw">this</span>.<span class="fu">age</span> = age;
         }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setName</span>(String name) {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setName</span>(<span class="bu">String</span> name) {
             <span class="kw">this</span>.<span class="fu">name</span> = name;
         }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setAge</span>(Integer age) {
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setAge</span>(<span class="bu">Integer</span> age) {
             <span class="kw">this</span>.<span class="fu">age</span> = age;
         }
-        <span class="kw">public</span> String <span class="fu">getName</span>() {
+        <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getName</span>() {
             <span class="kw">return</span> name;
         }
-        <span class="kw">public</span> Integer <span class="fu">getAge</span>() {
+        <span class="kw">public</span> <span class="bu">Integer</span> <span class="fu">getAge</span>() {
             <span class="kw">return</span> age;
         }
     }
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
         Person p = <span class="kw">new</span> <span class="fu">Person</span>(<span class="st">&quot;Ella&quot;</span>,<span class="dv">1</span>);
         p.<span class="fu">setAge</span>(<span class="dv">2</span>);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getName</span>() + <span class="st">&quot; is &quot;</span> + p.<span class="fu">getAge</span>());
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getName</span>() + <span class="st">&quot; is &quot;</span> + p.<span class="fu">getAge</span>());
     }
 }</code></pre></div>
 <p>Here, <code>Person</code> is a final class. But this does not mean that its attributes are immutable. You can see this as <code>main</code> can invoke methods that change the values of the <code>name</code> and <code>age</code> attributes. Remember that a class being <code>final</code> just means that it cannot be sub-classed (inherited). To make immutable classes, all attributes must be immutable (and no mutable objects must be returned). In this case, we change the attribute declarations to:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> <span class="dt">final</span> String name;
-<span class="kw">private</span> <span class="dt">final</span> Integer age;</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> <span class="dt">final</span> <span class="bu">String</span> name;
+<span class="kw">private</span> <span class="dt">final</span> <span class="bu">Integer</span> age;</code></pre></div>
 <p>With this modification, the code will not even compile.</p>
 <hr />
 <h1 id="some-useful-java-objects">Some useful Java objects</h1>
@@ -684,17 +604,17 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 <li>Java arrays are of fixed length</li>
 <li><code>ArrayList</code> gives you an object that can handle arrays of any object that change length</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayList&lt;Integer&gt; a = <span class="kw">new</span> ArrayList();
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ArrayList</span>&lt;<span class="bu">Integer</span>&gt; a = <span class="kw">new</span> <span class="bu">ArrayList</span>();
 a.<span class="fu">add</span>(<span class="dv">3</span>);
 a.<span class="fu">add</span>(<span class="dv">5</span>);
-System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class="fu">contains</span>(<span class="dv">4</span>)); <span class="co">// Checks is 4 is in a</span></code></pre></div>
+<span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class="fu">contains</span>(<span class="dv">4</span>)); <span class="co">// Checks is 4 is in a</span></code></pre></div>
 <p>Be careful of arraylists of integers. Various arraylist methods are overloaded to take an object or an integer as the argument (e.g. remove()). This can get very confusing!</p>
 <hr />
 <h2 id="hashset">HashSet</h2>
 <ul>
 <li>Useful way of keeping a set of objects together (not ordered)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    HashSet&lt;String&gt; h = <span class="kw">new</span> HashSet&lt;String&gt;();
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="bu">HashSet</span>&lt;<span class="bu">String</span>&gt; h = <span class="kw">new</span> <span class="bu">HashSet</span>&lt;<span class="bu">String</span>&gt;();
     h.<span class="fu">add</span>(<span class="st">&quot;hello&quot;</span>);
     h.<span class="fu">add</span>(<span class="st">&quot;simon&quot;</span>);
     h.<span class="fu">add</span>(<span class="st">&quot;hello&quot;</span>); <span class="co">// Wont add as already in there</span>
@@ -708,15 +628,107 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
 <ul>
 <li>Useful way of storing key,value pairs</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    HashMap&lt;String,Double&gt; h = <span class="kw">new</span> HashMap&lt;String,Double&gt;();
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="bu">HashMap</span>&lt;<span class="bu">String</span>,<span class="bu">Double</span>&gt; h = <span class="kw">new</span> <span class="bu">HashMap</span>&lt;<span class="bu">String</span>,<span class="bu">Double</span>&gt;();
     h.<span class="fu">put</span>(<span class="st">&quot;banana&quot;</span>,<span class="fl">3.0</span>);
     h.<span class="fu">put</span>(<span class="st">&quot;apple&quot;</span>,<span class="fl">2.0</span>);
-    System.<span class="fu">out</span>.<span class="fu">println</span>(h.<span class="fu">get</span>(<span class="st">&quot;apple&quot;</span>)); <span class="co">//print 2</span>
+    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(h.<span class="fu">get</span>(<span class="st">&quot;apple&quot;</span>)); <span class="co">//print 2</span>
     h.<span class="fu">keySet</span>(); <span class="co">// Returns a set of the keys</span></code></pre></div>
 <ul>
 <li>Very fast for obtaining items for a particular key</li>
 </ul>
 <hr />
+<h1 id="hashing">Hashing</h1>
+<ul>
+<li>Hashing solves the problem of <em>efficiently</em> finding items in some collection</li>
+<li>We'll use the example of storing a phonebook. E.g. we want to store the following:
+<ul>
+<li>Simon, 0777777777</li>
+<li>Jennifer, 0666677889</li>
+<li>Ravi, 056782776</li>
+<li>Ken, 0447838827</li>
+<li>Hannah, 066848382</li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>The simplest solution would be to create two arrays (forget the problem of parallel arrays for now)</li>
+<li>Then, to find the number for a particular person, we loop through the array of names</li>
+<li><code>PhoneBook1.java</code></li>
+</ul>
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">import</span><span class="im"> java.util.ArrayList;</span>
+<span class="kw">public</span> <span class="kw">class</span> PhoneBook1 {
+    <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; names;
+    <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt; numbers;
+    <span class="kw">public</span> <span class="fu">PhoneBook1</span>() {
+        names = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+        numbers = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;<span class="bu">String</span>&gt;();
+    }    
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name, <span class="bu">String</span> number) {
+        names.<span class="fu">add</span>(name);
+        numbers.<span class="fu">add</span>(number);
+    }
+    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+        <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;names.<span class="fu">size</span>();i++) {
+            <span class="kw">if</span>(names.<span class="fu">get</span>(i).<span class="fu">equals</span>(name)) {
+                <span class="kw">return</span> numbers.<span class="fu">get</span>(i);
+            }
+        }
+        <span class="kw">return</span> <span class="st">&quot;&quot;</span>; <span class="co">// If name doesn&#39;t exist</span>
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        PhoneBook1 p = <span class="kw">new</span> <span class="fu">PhoneBook1</span>();
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Simon&quot;</span>, <span class="st">&quot;0777777777&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Jennifer&quot;</span>, <span class="st">&quot;0666677889&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ravi&quot;</span>, <span class="st">&quot;056782776&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ken&quot;</span>, <span class="st">&quot;0447838827&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Hannah&quot;</span>, <span class="st">&quot;066848382&quot;</span>);
+
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getNumber</span>(<span class="st">&quot;Ravi&quot;</span>));
+    }
+}</code></pre></div>
+<ul>
+<li>In general looping over all entries will be slow (if lots of entries)</li>
+<li>A solution:
+<ul>
+<li>Assume no name longer than 15 characters</li>
+<li>Create two arrays as before</li>
+<li>Store the name and number in the nth position, where n = length of the name</li>
+<li><code>PhoneBook2.java</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">
+<span class="kw">public</span> <span class="kw">class</span> PhoneBook2 {
+    <span class="kw">private</span> <span class="bu">String</span>[] names = <span class="kw">new</span> <span class="bu">String</span>[<span class="dv">15</span>];
+    <span class="kw">private</span> <span class="bu">String</span>[] numbers = <span class="kw">new</span> <span class="bu">String</span>[<span class="dv">15</span>];
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addEntry</span>(<span class="bu">String</span> name,<span class="bu">String</span> number) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>();
+        names[l] = name;
+        numbers[l] = number;
+    }
+    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getNumber</span>(<span class="bu">String</span> name) {
+        <span class="dt">int</span> l = name.<span class="fu">length</span>();
+        <span class="kw">return</span> numbers[l];
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        PhoneBook2 p = <span class="kw">new</span> <span class="fu">PhoneBook2</span>();
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Simon&quot;</span>, <span class="st">&quot;0777777777&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Jennifer&quot;</span>, <span class="st">&quot;0666677889&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ravi&quot;</span>, <span class="st">&quot;056782776&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Ken&quot;</span>, <span class="st">&quot;0447838827&quot;</span>);
+        p.<span class="fu">addEntry</span>(<span class="st">&quot;Hannah&quot;</span>, <span class="st">&quot;066848382&quot;</span>);
+
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(p.<span class="fu">getNumber</span>(<span class="st">&quot;Ravi&quot;</span>));
+    }
+}</code></pre></div>
+<ul>
+<li>This is much quicker as we can jump directly to the correct array position.</li>
+<li>This is a simple example of <em>hashing</em></li>
+<li></li>
+</ul>
 <h1 id="generics">Generics</h1>
 <h2 id="arraylist-1"> ArrayList</h2>
 <ul>
@@ -738,12 +750,12 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
 <li>Can also have multiple types in the definition (<code>&lt;A,B,C,D&gt;</code>)</li>
 <li>See <code>Dictionary.java</code></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.util.ArrayList;</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.util.ArrayList;</span>
 <span class="co">// A hacky alternative to HashMaps to demonstrate</span>
 <span class="co">// making a class with generics</span>
-<span class="kw">public</span> <span class="kw">class</span> Dictionary&lt;A,B&gt; {
-    <span class="kw">private</span> ArrayList&lt;A&gt; listA = <span class="kw">new</span> ArrayList&lt;A&gt;();
-    <span class="kw">private</span> ArrayList&lt;B&gt; listB = <span class="kw">new</span> ArrayList&lt;B&gt;();
+<span class="kw">public</span> <span class="kw">class</span> <span class="bu">Dictionary</span>&lt;A,B&gt; {
+    <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;A&gt; listA = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;A&gt;();
+    <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;B&gt; listB = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;B&gt;();
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">add</span>(A a,B b) {
         listA.<span class="fu">add</span>(a);
         listB.<span class="fu">add</span>(b);
@@ -754,31 +766,21 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
     }
 }</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> DictionaryTest {
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
-        Dictionary&lt;String,Double&gt; d = <span class="kw">new</span> Dictionary&lt;String,Double&gt;();
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Dictionary</span>&lt;<span class="bu">String</span>,<span class="bu">Double</span>&gt; d = <span class="kw">new</span> <span class="bu">Dictionary</span>&lt;<span class="bu">String</span>,<span class="bu">Double</span>&gt;();
         d.<span class="fu">add</span>(<span class="st">&quot;apple&quot;</span>,<span class="fl">3.0</span>);
         d.<span class="fu">add</span>(<span class="st">&quot;banana&quot;</span>,<span class="fl">2.5</span>);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getDefinition</span>(<span class="st">&quot;banana&quot;</span>));
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getDefinition</span>(<span class="st">&quot;banana&quot;</span>));
 
         <span class="co">// Can also make the reverse!</span>
-        Dictionary&lt;Double,String&gt; d2 = <span class="kw">new</span> Dictionary&lt;Double,String&gt;();
+        <span class="bu">Dictionary</span>&lt;<span class="bu">Double</span>,<span class="bu">String</span>&gt; d2 = <span class="kw">new</span> <span class="bu">Dictionary</span>&lt;<span class="bu">Double</span>,<span class="bu">String</span>&gt;();
         d2.<span class="fu">add</span>(<span class="fl">3.0</span>,<span class="st">&quot;apple&quot;</span>);
         d2.<span class="fu">add</span>(<span class="fl">2.5</span>,<span class="st">&quot;banana&quot;</span>);
-        System.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getDefinition</span>(<span class="fl">3.0</span>));
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d2.<span class="fu">getDefinition</span>(<span class="fl">3.0</span>));
 
     }
 }</code></pre></div>
-<hr />
 <h1 id="testing">Testing</h1>
-<h2 id="debugging">Debugging</h2>
-<ul>
-<li>In semester 1 you learnt to use the Eclipse debugger</li>
-<li>There is more to testing than debugging</li>
-<li>In real development projects, many people are wholly devoted to testing</li>
-<li>Black box, white box</li>
-<li>Unit testing...</li>
-</ul>
-<hr />
 <h2 id="unit-testing">Unit testing</h2>
 <ul>
 <li>Testing individual components (e.g. classes, methods) to see if they are fit for use</li>
@@ -791,6 +793,7 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
 <li><code>JUnit</code> is a popular Java unit test framework</li>
 <li>A <em>test class</em> is created for each normal class</li>
 <li>We can then run <code>JUnit</code> and it will automatically perform the tests</li>
+<li>Easiest to do this directly in Eclipse</li>
 </ul>
 <hr />
 <h2 id="pointless.java"><code>Pointless.java</code></h2>
@@ -807,64 +810,10 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(a.<span class
     }
 }</code></pre></div>
 <hr />
-<h2 id="pointlesstest.java"><code>PointlessTest.java</code></h2>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import org.junit.Test;</span>
-<span class="kw">import org.junit.Assert;</span>
-<span class="kw">public</span> <span class="kw">class</span> PointlessTest {
-    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">double</span> EPSILON = <span class="fl">1e-12</span>; 
-    <span class="fu">@Test</span> <span class="kw">public</span> <span class="dt">void</span> <span class="fu">testIncrement</span>()
-    {
-        Pointless p = <span class="kw">new</span> <span class="fu">Pointless</span>(<span class="dv">1</span>);
-        p.<span class="fu">increment</span>();
-        <span class="dt">int</span> expected = <span class="dv">2</span>;
-        Assert.<span class="fu">assertEquals</span>(expected,p.<span class="fu">getMyInt</span>(),EPSILON);
-    }
-}</code></pre></div>
-<hr />
-<h2 id="compiling">Compiling</h2>
-<ul>
-<li>To compile <code>PointlessTest</code> we need <code>JUnit</code>
-<ul>
-<li>You can do this in eclipse</li>
-<li>Or from the command line</li>
-</ul></li>
-<li>On a mac:</li>
-</ul>
-<p><code>javac -cp .:../JUnit/junit-4.12.jar PointlessTest.java</code></p>
-<ul>
-<li><code>-cp</code> sets the <em>class path</em>
-<ul>
-<li>In this case, '.' means current directory and <code>./JUnit/junit-4.12.jar</code> is where the <code>JUnit</code> <code>.jar</code> file is</li>
-</ul></li>
-</ul>
-<hr />
-<h2 id="running">Running</h2>
-<ul>
-<li>Again, possible in Eclipse or from the command line</li>
-<li>From command line (mac):</li>
-</ul>
-<p><code>java -cp .:../JUnit/junit-4.12.jar:../JUnit/hamcrest-core-1.3.jar PointlessTest</code></p>
-<ul>
-<li>Result:</li>
-</ul>
-<pre><code>JUnit version 4.12
-.
-Time: 0.004
-
-OK (1 test)</code></pre>
-<hr />
-<h2 id="pointless2.java"><code>Pointless2.java</code></h2>
-<ul>
-<li>We now add a doubling function</li>
-<li>and write a new test case (<code>PointlessTest2.java</code>)</li>
-<li>What happens?</li>
-<li>Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)</li>
-</ul>
-<hr />
 <h2 id="assertions">Assertions</h2>
 <ul>
-<li><code>JUnit</code> testing is done at compile time</li>
-<li>We might also want runtime checks
+<li>Unit testing is done at compile time</li>
+<li>We might also want <em>runtime</em> checks
 <ul>
 <li>to catch runtime errors (e.g. based on input that is unknown at compile time)</li>
 </ul></li>
@@ -879,12 +828,12 @@ OK (1 test)</code></pre>
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">decrement</span>(<span class="dt">int</span> d) {
         <span class="kw">if</span>(d&gt;myInt) {
             <span class="co">// Cannot decrement!</span>
-            System.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Can&#39;t decrement!!&quot;</span>);
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Can&#39;t decrement!!&quot;</span>);
         }<span class="kw">else</span> {
             myInt = myInt - d;
         }
     }
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
         <span class="kw">new</span> <span class="fu">AssertionExample</span>(<span class="dv">5</span>).<span class="fu">decrement</span>(<span class="dv">10</span>);
     }
 }</code></pre></div>
@@ -908,7 +857,7 @@ OK (1 test)</code></pre>
         assert myInt &gt;= d;
         myInt = myInt - d;
     }
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
         <span class="kw">new</span> <span class="fu">AssertionExample2</span>(<span class="dv">5</span>).<span class="fu">decrement</span>(<span class="dv">10</span>);
     }
 }</code></pre></div>

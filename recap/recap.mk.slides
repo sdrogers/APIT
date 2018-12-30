@@ -1,10 +1,10 @@
 % APIT - Java recap etc
 % Dr. Simon Rogers
-% 14/11/2014
+% 29/12/2018
 
 # Overview
 
-- Programming
+- Introduction
 - Objects, interfaces etc
 - Immutable objects
 - Call by reference / value
@@ -17,47 +17,6 @@
 
 # Programming
 
-## Your experience
-
-- How many people had their first experience of programming in S1?
-- What other languages have you used?
-- What programming tools have you used?
-- How many of you know what the following things are:
-	- Objects?
-	- Functions?
-	- Stacks? Queues? Linked lists? Arrays?
-	- Regular Expressions?
-
-----
-
-
-## High v low -level languages
-
-- Computers follow instructions in *machine code*
-	- binary...quite hard for humans to read
-	- not *that* long ago, humans had to program computers like this (some academics in SoCS will remember...)
-	- Machine code is *low level*
-- At the other extreme, *high level* languages are eas(y,ier) for humans to read
-	- Java is a fairly *high level* language
-
-----
-
-
-## Compiled v Interpreted v Java
-
-- Computers run programs in Machine Code
-	- Low level language. Not human readable
-- Some languages require programs to be *compiled* into Machine Code
-	- e.g. C++
-- Some languages are interpreted line by line as they are run
-	- e.g. Matlab
-- Java is a bit different
-	- It is compiled into Bytecode
-	- Bytecode is run on the Java Virtual Machine
-	- What is a virtual machine?
-
-----
-
 ## Compiling and running Java from the command line
 
 - I will do this in class
@@ -65,6 +24,8 @@
 	- Compiling: `javac MyClass.java`
 	- Running: `java MyClass`
 - We will see some more complex examples throughout the course
+- Feel free to use Eclipse if you prefer
+- Also, Visual Studio Code...
 
 ----
 
@@ -74,16 +35,6 @@
 - For larger projects, it is important to organise all your files in a standard manner
 	- Eclipse does this automatically
 - If you want to do it manually, good description is available [here](http://cs.lmu.edu/~ray/notes/largejavaapps/)
-
-----
-
-# Object Orientation
-
-- Java is an *Object Oriented* language
-- What are objects?
-- Why program with objects?
-- Why not program with objects?
-- [Homework: read this](http://duramecho.com/ComputerInformation/WhatIsObjectOrientedProgramming.html)
 
 ----
 
@@ -129,20 +80,6 @@
 - Note:
 	- Classes can only sub-class one class...
 	- ...but can implement many interfaces
-
-----
-
-## Exercise: measurement with units
-
->You are working in a team building a system to work with GPS data (from e.g. a running watch). Your task is to create the part of the code to deal with distance values, that can be stored in a number of different units (metres, kilometers, miles, etc). Objects with different units have to be able to be compared (for e.g. sorting).
-
-- Can you think of a way of doing this with a single class (e.g. `UnitDistance` that stores the distance as a double and an object representing the unit). You'll need an interface somewhere...
-- My solution in `recap/code/UnitDistance`
-- Could you solve this with an abstract class instead of an interface? How?
-
-
-----
-
 
 # Some odds and ends
 
@@ -428,6 +365,34 @@ System.out.println(a.contains(4)); // Checks is 4 is in a
 
 ----
 
+# Hashing
+
+- Hashing solves the problem of *efficiently* finding items in some collection
+- We'll use the example of storing a phonebook. E.g. we want to store the following:
+	- Simon, 0777777777
+ 	- Jennifer, 0666677889
+ 	- Ravi, 056782776
+ 	- Ken, 0447838827
+ 	- Hannah, 066848382
+
+----
+
+- The simplest solution would be to create two arrays (forget the problem of parallel arrays for now)
+- Then, to find the number for a particular person, we loop through the array of names
+- `PhoneBook1.java`
+
+----
+
+
+- In general looping over all entries will be slow (if lots of entries)
+- A solution:
+	- Assume no name longer than 15 characters
+	- Create two arrays as before
+	- Store the name and number in the nth position, where n = length of the name
+	- `PhoneBook2.java`
+
+
+
 # Generics
 
 ## ArrayList
@@ -455,19 +420,8 @@ public class MyClass<T> {
 - See `Dictionary.java`
 
 
-----
 
 # Testing
-
-## Debugging
-
-- In semester 1 you learnt to use the Eclipse debugger
-- There is more to testing than debugging
-- In real development projects, many people are wholly devoted to testing
-- Black box, white box
-- Unit testing...
-
-----
 
 ## Unit testing
 
@@ -482,6 +436,7 @@ public class MyClass<T> {
 - `JUnit` is a popular Java unit test framework
 - A *test class* is created for each normal class
 - We can then run `JUnit` and it will automatically perform the tests
+- Easiest to do this directly in Eclipse
 
 ----
 
@@ -504,71 +459,10 @@ public class Pointless {
 
 ----
 
-## `PointlessTest.java`
-
-~~~~{.java}
-import org.junit.Test;
-import org.junit.Assert;
-public class PointlessTest {
-	private static final double EPSILON = 1e-12; 
-	@Test public void testIncrement()
-	{
-		Pointless p = new Pointless(1);
-		p.increment();
-		int expected = 2;
-		Assert.assertEquals(expected,p.getMyInt(),EPSILON);
-	}
-}
-~~~~
-
-----
-
-## Compiling
-
-- To compile `PointlessTest` we need `JUnit`
-	- You can do this in eclipse
-	- Or from the command line
-- On a mac:
-
-`javac -cp .:../JUnit/junit-4.12.jar PointlessTest.java`
-
-- `-cp` sets the *class path*
-	- In this case, '.' means current directory and `./JUnit/junit-4.12.jar` is where the `JUnit` `.jar` file is
-
-----
-
-## Running
-
-- Again, possible in Eclipse or from the command line
-- From command line (mac):
-
-`java -cp .:../JUnit/junit-4.12.jar:../JUnit/hamcrest-core-1.3.jar PointlessTest`
-
-- Result:
-
-~~~~
-JUnit version 4.12
-.
-Time: 0.004
-
-OK (1 test)
-~~~~
-
-----
-
-## `Pointless2.java`
-
-- We now add a doubling function
-- and write a new test case (`PointlessTest2.java`)
-- What happens?
-- Note: the compile commands start getting a bit tricky - this can be overcome by using a build system (not covered in this course)
-
-----
-
 ## Assertions
 
-- `JUnit` testing is done at compile time
-- We might also want runtime checks
+- Unit testing is done at compile time
+- We might also want *runtime* checks
 	- to catch runtime errors (e.g. based on input that is unknown at compile time)
 - The naive way is through the use of `if` statements
 
