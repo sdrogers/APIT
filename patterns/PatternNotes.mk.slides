@@ -1,6 +1,6 @@
 % AP(IT): Design Patterns
 % Simon Rogers
-% 23rd Feb 2015
+% 2nd Jan 2019
 
 # Introduction 
 
@@ -12,42 +12,66 @@
 	- Whole applications (e.g. Model-View-Controller)
 	- Small parts of an application (e.g. iterators)
 
+## Why are we covering them?
+
+- Useful things to be aware of
+- Great examples of the benefits of inheritance and polymorphism
+
+
 # Some useful patterns
 
 ## Iterators
 
 - Many algorithms require the ability to move through a collection of objects
 	- Finding, sorting, etc
-- We'll concentrate on finding - i.e. we'd like to find the position of some object in the collection
-	- Can we make a general finder that will work with *any* collection of objects?
-	- Yes: we just need to define various operations that the collection should be able to perform (*Design Pattern*)
-		- What do we need?
+- Java's `Iterator` interface provides a standard way to allow other code to move through the items in a particular collection.
+- Many inbuilt Java classes already have the ability to provide iterators
+- The `Iterator` interface defines three methods: `hasNext()`, `next()` and `remove()` (the final one is often not implemented).
 
-## Java's `Iterator` interface
+----
 
-- For an object to be iterable in Java, it must implement the `Iterator` interface
-- To do so, it must implement the methods:
-	- `hasNext()` (boolean - returns true if there is at least one more element in the iterator)
-	- `next()` (type `T` - returns a reference to the next object in the iterator)
-	- e.g. `ItArray` and `Finder`
+~~~~{.java}
+
+import java.util.ArrayList;
+import java.util.Iterator;
+public class ArrayListExample {
+    public static void main(String[] args) {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("Simon");
+        al.add("Ella");
+        Iterator i = al.iterator();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }
+    }
+}
+
+~~~~
 
 
-## Java's `for` loops
+----
 
-- If you want to be able to put your type in the new `for` loop:
-`for(Integer a: ItArray){}`
-- Your object must also implement `Iterable` and its only method:
-	- `Iterator<E> iterator()`
-- e.g. `ItTest` (or older code: `ItCollection` and `Finder2` (or `ItArray2` and `Finder3`))
-- Warning: be careful when iterating over the same thing twice at the same time...you only have one `pos`
-	- It's sensible to return a new version of your object in the `iterator()` method...
+- To make your own iterator, simply implement the `next()`, `hasNext()`, and `remove()` methods.
+- e.g. `Counter.java` - an Iterator that iterates over the integers from 0 to 9.
 
-## List iterators
+
+## Iterable
+
+- In the `ArrayList` example, the `ArrayList` object provided us an `Iterator`
+- This is because it implements an interface called `Iterable`.
+- `Iterable` defines a single method `iterator()` that returns an `Iterator`.
+- `TenRandoms.java` is an example of how to do this. It is a class that creates an array of ten random numbers and then provides `Iterators` over the array. Note it implements `Iterable` and not `Iterator`
+- `Iterable` also allows you to use Java's concise for loop syntax
+
+----
+
+
 
 - `Iterator` has a sub-interface: `ListIterator` with more methods:
 	- See [ListIterator](http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html)
 	- See [ArrayList](http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html) for an object that implements `ListIterator` and `Iterator`
 
+----
 
 ## The composite pattern
 
@@ -108,107 +132,6 @@
 - Final implementation of methods is usually deferred to the leaves.
 - Useful in any application where objects can be in a hierarchy.
 - What would we need to do to allow composites of composites?
-
-## Factory methods
-
-- Note that factories blur the line of what is and isn't a pattern, depending on their use. Doesn't matter though, they can be useful however you use them!
-- Most objects are created via a call to new, which calls the `constructor`
-- Constructors can be overloaded (defined in multiple-forms)
-- Not always possible to get what you want...
-
-## Factory methods
-
-- Methods that create new objects
-- [Nice example from Wikipedia](http://en.wikipedia.org/wiki/Factory_(object-oriented_programming)#Java)
-- Complex numbers can be represented as a real and complex co-ordinate or as an angle and a radius. We'd like to store as co-ordinates but should allow creation either way.
-- Both ways require two doubles so we can't overload constructors.
-- Answer: create factory methods:
-
-## Factory methods - complex numbers
-
-~~~~{.java}
-class Complex {
-	public static Complex fromCart(double r,double i) {
-		return new Complex(r,i);
-	}
-	public static Complex fromPolar(double r, double a) {
-		return new complex(r*cos(a),r*sin(a));
-	}
-	private Complex(double r,i) {
-		...
-		// Note private constructor!
-	}
-}
-~~~~
-
-## Factory pattern
-
-- Separates use of objects from their creation
-- E.g. We have some abstract class or interface (e.g. shape)
-- We build a program to manipulate these objects
-- Don't want to change it if new objects are added
-- All creation is done via a separate factory class
-
-## Factory pattern - example
-
-- Drawing program
-- Users type in a shape type to draw
-- Program passes string to factory
-- Factory creates object and returns it (as abstract)
-- Program manipulates object
-- Can also add and remove class types from factory without changing factory code
-	- But this gets complex
-
-## Factory pattern - example 1
-
-~~~~{.java}
-
-public Interface Shape {
-	public draw();
-}
-public class Rectangle implements Shape {
-	public draw() {
-		System.out.println("Drawing a rectangle");
-	}
-}
-public class Circle implements Shape {
-	public draw() {
-		System.out.println("Drawing a circle");
-	}
-}
-~~~~
-
-## Factory pattern - example 2
-
-~~~~{.java} 
-
-public class ShapeFactory {
-	public static Shape makeShape(String shapeType) {
-		if(shapeType.equals("RECTANGLE")) {
-			return new Rectangle();
-		}else if(shapeType.equals("CIRCLE")) {
-			return new Circle();
-		}
-	}
-}
-~~~~
-
-## Factory pattern - example 3
-
-~~~~{.java}
-	public static void main(String[] args) {
-		System.out.println("Enter type of shape:");
-		String shape = System.console.readLine();
-		Shape newShape = ShapeFactory.makeShape(shape);
-		newShape.draw();
-	}
-~~~~
-
-## Factory pattern - summary
-
-- The drawing program `FactoryTest` wouldn't need to be changed at all if further shapes were added.
-- This is particularly useful in complex systems where changes would otherwise be required in lots of places
-- Note that it assumes that in the drawing program we would only use the methods declared in `Shape` and not new methods declared in the different concrete objects (there weren't any in my example)
 
 ## Visitor pattern
 
@@ -349,89 +272,6 @@ public class DisplayStuffVisitor implements MyVisitor {
 	}
 	public void visit(Human human) {
 		System.out.println("This is some stuff about humans. They have 2 legs.");
-	}
-}
-~~~~
-
-## The Proxy pattern
-
-- The proxy pattern defines wrapper classes that act as interfaces (in a general sense) to other classes
-- Useful for e.g.
-	- *Simplicity:* can make a simpler API for complex objects (and standardise for different objects)
-	- *Remote resources:* make remote objects look like local objects (e.g. `Socket`)
-	- *Streamlining*: can stop big computations happening if they are unnecessary
-	- *Security*: adding security checks to an object
-
-## Proxy - example
-
-- From [wikipedia](http://en.wikipedia.org/wiki/Proxy_pattern)
-- Class `RealImage` loads and displays images
-- Assume that loading is time and memory consuming and therefore we only load if we definitely need to display
-	- Displaying might not always be necessary
-- `ProxyImage` wraps `RealImage` and only creates the `RealImage` option when `display` is called
-
-~~~~{.java}
-public interface Image {
-	public void displayImage();
-}
-~~~~
-
-## Proxy - example
-
-- RealImage:
-
-~~~~{.java}
-public class RealImage implements Image{
-	private String filename = null;
-	public RealImage(final String filename) {
-		this.filename = filename;
-		loadImageFromDisk();
-	}
-	private void loadImageFromDisk() {
-		System.out.println("Loading " + filename);
-	}
-	public void displayImage() {
-		System.out.println("Displaying " + filename);
-	}
-}
-~~~~
-
-## Proxy - example
-
-- ProxyImage:
-
-~~~~{.java}
-public class ProxyImage implements Image{
-	private String filename = null;
-	private RealImage image = null;
-	public ProxyImage(final String filename) {
-		this.filename = filename;
-	}
-	public void displayImage() {
-		if (image == null) {
-			image = new RealImage(filename);
-		}
-		image.displayImage();
-	}
-}
-~~~~
-
-## Proxy - example
-
-- Test code:
-
-~~~~{.java}
-public class ProxyImage implements Image{
-	private String filename = null;
-	private RealImage image = null;
-	public ProxyImage(final String filename) {
-		this.filename = filename;
-	}
-	public void displayImage() {
-		if (image == null) {
-			image = new RealImage(filename);
-		}
-		image.displayImage();
 	}
 }
 ~~~~
