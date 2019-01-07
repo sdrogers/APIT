@@ -1,6 +1,6 @@
 % Advanced Programming (IT)
 % Dr. Simon Rogers (simon.rogers@glasgow.ac.uk, @sdrogers)
-% January 2018
+% January 2019
 
 # Formalities
 
@@ -13,13 +13,13 @@
 ## Lectures and labs
 
 - All sessions on Tuesdays!
- - 11-13: Lecture
- - 14-15: Lab
+ - 11-12: Lecture
+ - 12-13: Lab
+ - 14-15: Lecture
  
 ## Venues
 
 - Please check MyCampus for up-to-date lecture Venues
-- Note: MyCampus will have a venue for the 2-3 session. Ignore this, it's in the lab
 
 ## Etiquette
 
@@ -65,8 +65,8 @@
 ## Main Topics
 
 - Semester 1 recap and Java basics
+- Design patterns
 - Concurrency
 - Distributed systems
-- Design patterns
 
 
