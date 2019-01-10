@@ -623,17 +623,6 @@ endnotesonly
 
 
 
-## Disconnections can be messy
-
-- What happens when the Server or Client disconnects in the `DataServer`?
-
-## Knowing when a client/server has stopped?
-
-- Often, it will be useful to know when a client/server has left
-- The easiest way is by periodically trying to read a line
-- If `readLine()` returns `null`, then the other party has gone
-- `DateServer3`, `DateClient3`
-
 ----
 
 ## Working in Swing
