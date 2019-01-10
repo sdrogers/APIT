@@ -14,8 +14,10 @@ public class DateServer {
 				out.println((new Date()).toString());
 				Thread.sleep(500);
 			}
-		}catch (Exception e) {
-			System.out.println(e);
+		}catch (InterruptedException e) {
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
 		}finally {
 			try {
 				client.close();

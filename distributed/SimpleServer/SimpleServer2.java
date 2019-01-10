@@ -12,8 +12,15 @@ public class SimpleServer2 {
 			PrintWriter writer = new PrintWriter(client.getOutputStream(),true);
 			// send a message
 			writer.println("Hello");
+			writer.println("Boo");
+			try {
+			while(true) {
+
+			}
+		}finally{
 			// Close the connection
 			client.close();
+		}
 		}
 	}
 }

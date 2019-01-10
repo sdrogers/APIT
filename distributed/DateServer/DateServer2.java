@@ -14,10 +14,13 @@ public class DateServer2 {
 				new Handler(listener.accept()).start();
 			}
 		}catch(IOException e) {
+			e.printStackTrace();
 		}finally {
 			try{
 				listener.close();
-			}catch(IOException e){}
+			}catch(IOException e){
+				e.printStackTrace();
+			}
 		}
  	}
 
@@ -34,9 +37,19 @@ public class DateServer2 {
 				while(true) {
 					String message = (new Date()).toString();
 					out.println(message);
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				}
-			}catch(Exception e) {}
+			}catch(InterruptedException e) {
+				e.printStackTrace();
+			}catch(IOException e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					this.socket.close();
+				}catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }
