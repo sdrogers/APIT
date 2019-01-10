@@ -40,6 +40,15 @@ public class SimpleServer {
 }
 ~~~~
 
+
+----
+
+## `ServerSocket.accept()`
+
+- The `accept()` method of the `ServerSocket` object waits indefinitely for a connection.
+- Once a client has arrived, it created the `Socket` object
+- Once the `Socket` is made, the Server moves onto the next instruction
+
 ----
 
 ## Aside: IP addresses and ports
@@ -101,19 +110,50 @@ public class SimpleClient {
 
 - Communication can be performed through input and output `streams`
 	- Streams are *continuous flows of data*. i.e. data can be put in at one end, and read at the other end
-	- Streams transmit (normally) bytes or chars
-	- In Java, objects that are `Serializable` can be transformed into bytes/chars and sent down a stream
-	- They can then be read (and cast) at the other end
-	- E.g. we will use the fact that `String` is `Serializable`
-- We will use the following Stream classes:
-	- PrintWriter
-	- BufferedReader
+	- Streams transmit bytes
+- `InputstreamReader` and `OutputStreamWriter` provide the functionality to convert individual characters to bytes that can be sent down a `Stream`.
 
 ----
 
-## Sending a message from the Server to the Client
+## Sending and receiving a single character
 
-- In the Server we create a `PrintWriter`:
+- To send a character from the Server:
+	- Create an `OutputStreamReader` from the `Socket`s output stream
+	- Use `write` to write a single character
+	- Use `flush` to force it to send
+- To receive a character:
+	- Create an `InputStreamReader` from the `Socket`s input stream (in the client)
+	- Use `read` to read a single character (as an int)
+	- Cast to `char`
+	- If -1 is read, the `Stream` has been disconnected
+- See `OneCharServer.java` and `OneCharClient.java`
+
+----
+
+
+## Sending longer messages
+
+- This process is repeated to send longer messages
+- When the Server is closed, the client will read -1
+- Note that `OutputStreamWriter` can also take a `String`
+
+----
+
+## Useful abstractions
+
+- Dealing with individual `char`s is a pain, especially reading
+- Various useful classes exist to make things easier
+- `Scanner` can be used with an `InputStream`
+- `Server.java` and `Client.java`
+
+
+
+
+----
+
+## Alternatives: `PrintWriter` and `BufferedReader`
+
+- In the Server we can also create a `PrintWriter`:
 
 ~~~~ {.java}
 PrintWriter writer = new PrintWriter(
@@ -134,10 +174,6 @@ BufferedReader reader = new BufferedReader(
 
 ----
 
-![](figures/SimpleServer2.jpg)
-
-----
-
 - What happens if you remove the `true` from the PrintWriter constructor?
 - What happens if you add the following to the Server, before the `println`?
 
@@ -154,20 +190,67 @@ try {
 
 
 - `DateServer` and `DateClient` implement a client-server system where a server periodically sends the data and time to a single client
-- Note the exception handling -- it can get quite complicated!
-- To allow for multiple connections, we put the server work (sending the date) into an object that extends `Thread`
-- `DateServer2`
-- When a new connection is accepted, the socket is passed to a new thread object that is then started
-	- Do we need to change `DateClient`?
+- Once the connection has been made, the Server enters an infinite loop where it sends a String representation of the Date to the client every 500ms
+- The client prints the data every time it is received
 
 ----
 
-## Knowing when a client/server has stopped?
 
-- Often, it will be useful to know when a client/server has left
-- The easiest way is by periodically trying to read a line
-- If `readLine()` returns `null`, then the other party has gone
-- `DateServer3`, `DateClient3`
+
+- To allow for multiple connections, we need multiple threads in the server (one per client)
+- We put the server work (sending the date) into an object that extends `Thread`
+- Every time a new connection is accepted, a new Thread is created
+- see `DateServer2.java`
+- Do we need to change `DateClient`?
+
+
+
+----
+
+## Two-way communication
+
+- If we want to be able to send and receive messages from both the client and the server we need more threads.
+- On each side, a Thread to read and a Thread to write
+- `Reader.java` and `Writer.java` are simple classes that implement `Runnable` for reading and writing
+
+----
+
+
+- `WalkyTalkyServer.java` is a server that creates a `Reader` and `Writer` when a client connects
+- `WalkyTalkyClient.java` is the same, for a client
+
+
+
+----
+
+## Sending other objects - Serializable
+
+- We are not restricted to just sending characters
+- Any `Serializable` object can be sent down a `Stream`
+- A `Serializable` object is one that implements the `Serializable` interface
+	- Normally no methods have to be overwritten
+- `ObjectOutputStream` and `ObjectInputStream` allow us to send and receive `Serializable` objects
+- `MessageServer.java`, `Message.java` and `MessageClient.java`
+
+
+----
+
+## Serialiazable
+
+- Any object within the object we are Searalizing must also be Serializable
+- If there are attributes that you don't want to encode, use the decorator `transient`
+- As well as being transmitted, objects can also be written to files:
+
+~~~~{.java}
+FileOutputStream fileOutputStream = 
+	new FileOutputStream("yourfile2.txt");
+ObjectOutputStream objectOutputStream = 
+	new ObjectOutputStream(fileOutputStream);
+objectOutputStream.writeObject(e);
+objectOutputStream.flush();
+objectOutputStream.close(); 
+~~~~
+
 
 ----
 
@@ -181,6 +264,12 @@ try {
 
 ----
 
-## Design exercise - Chatroom Application
+## Swing Chat Client
+
+- `ChatServer.java` is a multi-threaded Server than can handle multiple clients
+- When it receives a message from one client, it transmits it to all
+- `MessageClient` is the client we used in a previous example. It works from the console.
+- `SwingChatClient` is a Swing based client that can interact with the same server
+- It has a class that extends `SwingWorker` for reading messages
 
 

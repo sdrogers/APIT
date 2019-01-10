@@ -58,15 +58,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#servers-and-sockets">Servers and sockets</a><ul>
 <li><a href="#building-a-server">Building a server</a></li>
+<li><a href="#serversocket.accept"><code>ServerSocket.accept()</code></a></li>
 <li><a href="#aside-ip-addresses-and-ports">Aside: IP addresses and ports</a></li>
 <li><a href="#building-a-client">Building a client</a></li>
 <li><a href="#whats-happening">What's happening</a></li>
 <li><a href="#client-server-communication">Client-server communication</a></li>
-<li><a href="#sending-a-message-from-the-server-to-the-client">Sending a message from the Server to the Client</a></li>
+<li><a href="#sending-and-receiving-a-single-character">Sending and receiving a single character</a></li>
+<li><a href="#sending-longer-messages"> Sending longer messages</a></li>
+<li><a href="#useful-abstractions">Useful abstractions</a></li>
+<li><a href="#alternatives-printwriter-and-bufferedreader">Alternatives: <code>PrintWriter</code> and <code>BufferedReader</code></a></li>
 <li><a href="#allowing-multiple-connections">Allowing multiple connections</a></li>
-<li><a href="#knowing-when-a-clientserver-has-stopped">Knowing when a client/server has stopped?</a></li>
+<li><a href="#two-way-communication">Two-way communication</a></li>
+<li><a href="#sending-other-objects---serializable">Sending other objects - Serializable</a></li>
+<li><a href="#serialiazable"> Serialiazable</a></li>
 <li><a href="#working-in-swing">Working in Swing</a></li>
-<li><a href="#design-exercise---chatroom-application">Design exercise - Chatroom Application</a></li>
+<li><a href="#swing-chat-client">Swing Chat Client</a></li>
 </ul></li>
 </ul>
 </div>
@@ -98,19 +104,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>Servers can be created via <code>ServerSocket</code> objects (<code>SimpleServer</code>):</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.net.*;</span>
-<span class="kw">import java.io.*;</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.*;</span>
+<span class="kw">import</span><span class="im"> java.io.*;</span>
 <span class="kw">public</span> <span class="kw">class</span> SimpleServer {
     <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) <span class="kw">throws</span> IOException {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) <span class="kw">throws</span> <span class="bu">IOException</span> {
         <span class="co">// Make a server object</span>
-        ServerSocket listener = <span class="kw">new</span> ServerSocket(PORT);
+        <span class="bu">ServerSocket</span> listener = <span class="kw">new</span> <span class="bu">ServerSocket</span>(PORT);
         <span class="co">// Wait for a connection and create a client</span>
-        Socket client = listener.<span class="fu">accept</span>();
+        <span class="bu">Socket</span> client = listener.<span class="fu">accept</span>();
         <span class="co">// Close the connection</span>
         client.<span class="fu">close</span>();
     }
 }</code></pre></div>
+<p>Note that I have lazily got main to <code>throw IOException</code> so that the code will fit onto one slide!</p>
+<hr />
+<h2 id="serversocket.accept"><code>ServerSocket.accept()</code></h2>
+<ul>
+<li>The <code>accept()</code> method of the <code>ServerSocket</code> object waits indefinitely for a connection.</li>
+<li>Once a client has arrived, it created the <code>Socket</code> object</li>
+<li>Once the <code>Socket</code> is made, the Server moves onto the next instruction</li>
+</ul>
 <hr />
 <h2 id="aside-ip-addresses-and-ports">Aside: IP addresses and ports</h2>
 <ul>
@@ -152,14 +166,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>Clients are created via <code>Socket</code> objects (<code>SimpleClient</code>):</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import java.io.*;</span>
-<span class="kw">import java.net.*;</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.*;</span>
+<span class="kw">import</span><span class="im"> java.net.*;</span>
 <span class="kw">public</span> <span class="kw">class</span> SimpleClient {
     <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
-    <span class="kw">private</span> <span class="dt">static</span> String server = <span class="st">&quot;127.0.0.1&quot;</span>;
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(String[] args) <span class="kw">throws</span> IOException {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">String</span> server = <span class="st">&quot;127.0.0.1&quot;</span>;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) <span class="kw">throws</span> <span class="bu">IOException</span> {
         <span class="co">// Make a socket and try and connect</span>
-        Socket socket = <span class="kw">new</span> Socket(server,PORT);
+        <span class="bu">Socket</span> socket = <span class="kw">new</span> <span class="bu">Socket</span>(server,PORT);
         <span class="co">// Close the socket</span>
         socket.<span class="fu">close</span>();
     }
@@ -177,23 +191,153 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Communication can be performed through input and output <code>streams</code>
 <ul>
 <li>Streams are <em>continuous flows of data</em>. i.e. data can be put in at one end, and read at the other end</li>
-<li>Streams transmit (normally) bytes or chars</li>
-<li>In Java, objects that are <code>Serializable</code> can be transformed into bytes/chars and sent down a stream</li>
-<li>They can then be read (and cast) at the other end</li>
-<li>E.g. we will use the fact that <code>String</code> is <code>Serializable</code></li>
+<li>Streams transmit bytes</li>
 </ul></li>
-<li>We will use the following Stream classes:
-<ul>
-<li>PrintWriter</li>
-<li>BufferedReader</li>
-</ul></li>
+<li><code>InputstreamReader</code> and <code>OutputStreamWriter</code> provide the functionality to convert individual characters to bytes that can be sent down a <code>Stream</code>.</li>
 </ul>
 <hr />
-<h2 id="sending-a-message-from-the-server-to-the-client">Sending a message from the Server to the Client</h2>
+<h2 id="sending-and-receiving-a-single-character">Sending and receiving a single character</h2>
 <ul>
-<li>In the Server we create a <code>PrintWriter</code>:</li>
+<li>To send a character from the Server:
+<ul>
+<li>Create an <code>OutputStreamReader</code> from the <code>Socket</code>s output stream</li>
+<li>Use <code>write</code> to write a single character</li>
+<li>Use <code>flush</code> to force it to send</li>
+</ul></li>
+<li>To receive a character:
+<ul>
+<li>Create an <code>InputStreamReader</code> from the <code>Socket</code>s input stream (in the client)</li>
+<li>Use <code>read</code> to read a single character (as an int)</li>
+<li>Cast to <code>char</code></li>
+<li>If -1 is read, the <code>Stream</code> has been disconnected</li>
+</ul></li>
+<li>See <code>OneCharServer.java</code> and <code>OneCharClient.java</code></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">PrintWriter writer = <span class="kw">new</span> PrintWriter(
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.OutputStreamWriter;</span>
+<span class="kw">public</span> <span class="kw">class</span> OneCharServer {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">ServerSocket</span> listener = <span class="kw">null</span>;
+        <span class="bu">Socket</span> client = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            listener = <span class="kw">new</span> <span class="bu">ServerSocket</span>(<span class="dv">8765</span>);
+            client = listener.<span class="fu">accept</span>(); <span class="co">// wait for a single client</span>
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Client has arrived!&quot;</span>);
+            <span class="co">// At this point a client has arrived</span>
+
+            <span class="bu">OutputStreamWriter</span> os = <span class="kw">new</span> <span class="bu">OutputStreamWriter</span>(client.<span class="fu">getOutputStream</span>());
+        
+            os.<span class="fu">write</span>(<span class="ch">&#39;x&#39;</span>);
+            os.<span class="fu">flush</span>();
+
+            client.<span class="fu">close</span>();
+            listener.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>(); 
+        }
+    }    
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.InputStreamReader;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> OneCharClient {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Socket</span> s = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            s = <span class="kw">new</span> <span class="bu">Socket</span>(<span class="st">&quot;127.0.0.1&quot;</span>,<span class="dv">8765</span>); <span class="co">// IP Address and port</span>
+            <span class="co">// We are connected!</span>
+            <span class="bu">InputStreamReader</span> sr = <span class="kw">new</span> <span class="bu">InputStreamReader</span>(s.<span class="fu">getInputStream</span>());
+            <span class="dt">int</span> c = sr.<span class="fu">read</span>();
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>((<span class="dt">char</span>)c); <span class="co">// Print the character</span>
+            sr.<span class="fu">close</span>(); <span class="co">// Close the reader</span>
+            s.<span class="fu">close</span>(); <span class="co">// close the socket</span>
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }    
+}</code></pre></div>
+<hr />
+<div class="figure">
+<img src="figures/SimpleServer2.jpg" />
+
+</div>
+<hr />
+<h2 id="sending-longer-messages"> Sending longer messages</h2>
+<ul>
+<li>This process is repeated to send longer messages</li>
+<li>When the Server is closed, the client will read -1</li>
+<li>Note that <code>OutputStreamWriter</code> can also take a <code>String</code></li>
+</ul>
+<hr />
+<h2 id="useful-abstractions">Useful abstractions</h2>
+<ul>
+<li>Dealing with individual <code>char</code>s is a pain, especially reading</li>
+<li>Various useful classes exist to make things easier</li>
+<li><code>Scanner</code> can be used with an <code>InputStream</code></li>
+<li><code>Server.java</code> and <code>Client.java</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.net.ServerSocket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.OutputStreamWriter;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Server {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">ServerSocket</span> listener = <span class="kw">null</span>;
+        <span class="bu">Socket</span> client = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            listener = <span class="kw">new</span> <span class="bu">ServerSocket</span>(<span class="dv">8765</span>);
+            client = listener.<span class="fu">accept</span>(); <span class="co">// wait for a single client</span>
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Client has arrived!&quot;</span>);
+            <span class="co">// At this point a client has arrived</span>
+            <span class="bu">OutputStreamWriter</span> os = <span class="kw">new</span> <span class="bu">OutputStreamWriter</span>(client.<span class="fu">getOutputStream</span>());
+        
+            <span class="bu">Scanner</span> textInput = <span class="kw">new</span> <span class="bu">Scanner</span>(<span class="bu">System</span>.<span class="fu">in</span>);
+            <span class="kw">while</span>(<span class="kw">true</span>) {
+                <span class="bu">String</span> line = textInput.<span class="fu">nextLine</span>();
+                <span class="kw">if</span>(line.<span class="fu">equals</span>(<span class="st">&quot;END&quot;</span>)) {
+                    <span class="kw">break</span>;
+                }
+                os.<span class="fu">write</span>(line + <span class="ch">&#39;\n&#39;</span>);
+                os.<span class="fu">flush</span>();
+            }
+            textInput.<span class="fu">close</span>();
+            client.<span class="fu">close</span>();
+            listener.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>(); 
+        }
+    }    
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.util.Scanner;</span>
+<span class="kw">import</span><span class="im"> java.io.InputStreamReader;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> Client {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Socket</span> s = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            s = <span class="kw">new</span> <span class="bu">Socket</span>(<span class="st">&quot;127.0.0.1&quot;</span>,<span class="dv">8765</span>); <span class="co">// IP Address and port</span>
+            <span class="co">// We are connected!</span>
+            <span class="bu">Scanner</span> sr = <span class="kw">new</span> <span class="bu">Scanner</span>(s.<span class="fu">getInputStream</span>());
+            <span class="kw">while</span>(sr.<span class="fu">hasNextLine</span>()) {
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(sr.<span class="fu">nextLine</span>());
+            }
+            sr.<span class="fu">close</span>(); <span class="co">// Close the reader</span>
+            s.<span class="fu">close</span>(); <span class="co">// close the socket</span>
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }    
+}</code></pre></div>
+<hr />
+<h2 id="alternatives-printwriter-and-bufferedreader">Alternatives: <code>PrintWriter</code> and <code>BufferedReader</code></h2>
+<ul>
+<li>In the Server we can also create a <code>PrintWriter</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">PrintWriter</span> writer = <span class="kw">new</span> <span class="bu">PrintWriter</span>(
     client.<span class="fu">getOutputStream</span>(),<span class="kw">true</span>);</code></pre></div>
 <ul>
 <li>Note the <code>true</code> - this makes the stream automatically flush
@@ -202,47 +346,407 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li>In the client we create a <code>BufferedReader</code>:</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">BufferedReader reader = <span class="kw">new</span> BufferedReader(
-    <span class="kw">new</span> InputStreamReader(socket.<span class="fu">getInputStream</span>()));</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">BufferedReader</span> reader = <span class="kw">new</span> <span class="bu">BufferedReader</span>(
+    <span class="kw">new</span> <span class="bu">InputStreamReader</span>(socket.<span class="fu">getInputStream</span>()));</code></pre></div>
 <ul>
 <li><code>println</code> and <code>readLine</code> perform the necessary reading and writing actions</li>
 <li><code>SimpleServer2</code>, <code>SimpleClient2</code></li>
 </ul>
-<hr />
-<div class="figure">
-<img src="figures/SimpleServer2.jpg" />
-
-</div>
 <hr />
 <ul>
 <li>What happens if you remove the <code>true</code> from the PrintWriter constructor?</li>
 <li>What happens if you add the following to the Server, before the <code>println</code>?</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">try</span> {
-        Thread.<span class="fu">sleep</span>(<span class="dv">2000</span>);
-    }<span class="kw">catch</span>(InterruptedException e) {
+        <span class="bu">Thread</span>.<span class="fu">sleep</span>(<span class="dv">2000</span>);
+    }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
     }</code></pre></div>
 <hr />
 <h2 id="allowing-multiple-connections">Allowing multiple connections</h2>
 <p>The previous examples kill the server as soon as it has received and killed the first client connection. If we want to allow multiple clients simultaneously, we can embed the client sockets in threads. We will now look at an example client-server application that where the client periodically sends the current date and time to all clients.</p>
 <ul>
 <li><code>DateServer</code> and <code>DateClient</code> implement a client-server system where a server periodically sends the data and time to a single client</li>
-<li>Note the exception handling -- it can get quite complicated!</li>
-<li>To allow for multiple connections, we put the server work (sending the date) into an object that extends <code>Thread</code></li>
-<li><code>DateServer2</code></li>
-<li>When a new connection is accepted, the socket is passed to a new thread object that is then started
-<ul>
-<li>Do we need to change <code>DateClient</code>?</li>
-</ul></li>
+<li>Once the connection has been made, the Server enters an infinite loop where it sends a String representation of the Date to the client every 500ms</li>
+<li>The client prints the data every time it is received</li>
 </ul>
 <hr />
-<h2 id="knowing-when-a-clientserver-has-stopped">Knowing when a client/server has stopped?</h2>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.*;</span>
+<span class="kw">import</span><span class="im"> java.net.*;</span>
+<span class="kw">import</span><span class="im"> java.util.Date;</span>
+<span class="kw">public</span> <span class="kw">class</span> DateServer {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">Socket</span> client;
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">ServerSocket</span> listener;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="kw">try</span> {
+            listener = <span class="kw">new</span> <span class="bu">ServerSocket</span>(PORT);
+            client = listener.<span class="fu">accept</span>();
+            <span class="bu">PrintWriter</span> out = <span class="kw">new</span> <span class="bu">PrintWriter</span>(client.<span class="fu">getOutputStream</span>(),<span class="kw">true</span>);
+            <span class="kw">while</span>(<span class="kw">true</span>) {
+                out.<span class="fu">println</span>((<span class="kw">new</span> <span class="bu">Date</span>()).<span class="fu">toString</span>());
+                <span class="bu">Thread</span>.<span class="fu">sleep</span>(<span class="dv">500</span>);
+            }
+        }<span class="kw">catch</span> (<span class="bu">InterruptedException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">catch</span> (<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                client.<span class="fu">close</span>();
+                listener.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {}
+        }
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.*;</span>
+<span class="kw">import</span><span class="im"> java.io.*;</span>
+<span class="kw">import</span><span class="im"> java.util.Scanner;</span>
+<span class="kw">public</span> <span class="kw">class</span> DateClient {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">String</span> server = <span class="st">&quot;127.0.0.1&quot;</span>;
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">Socket</span> socket;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="kw">try</span>{
+            socket = <span class="kw">new</span> <span class="bu">Socket</span>(server,PORT);
+            <span class="bu">Scanner</span> reader = <span class="kw">new</span> <span class="bu">Scanner</span>(socket.<span class="fu">getInputStream</span>());
+            <span class="kw">while</span>(reader.<span class="fu">hasNextLine</span>()) {
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(reader.<span class="fu">nextLine</span>());
+            }
+            reader.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                socket.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+}</code></pre></div>
 <ul>
-<li>Often, it will be useful to know when a client/server has left</li>
-<li>The easiest way is by periodically trying to read a line</li>
-<li>If <code>readLine()</code> returns <code>null</code>, then the other party has gone</li>
-<li><code>DateServer3</code>, <code>DateClient3</code></li>
+<li>To allow for multiple connections, we need multiple threads in the server (one per client)</li>
+<li>We put the server work (sending the date) into an object that extends <code>Thread</code></li>
+<li>Every time a new connection is accepted, a new Thread is created</li>
+<li>see <code>DateServer2.java</code></li>
+<li>Do we need to change <code>DateClient</code>?</li>
 </ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.*;</span>
+<span class="kw">import</span><span class="im"> java.net.*;</span>
+<span class="kw">import</span><span class="im"> java.util.Date;</span>
+<span class="kw">public</span> <span class="kw">class</span> DateServer2 {
+    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">int</span> PORT = <span class="dv">8765</span>;
+    <span class="kw">private</span> <span class="dt">static</span> <span class="bu">ServerSocket</span> listener;
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args)  {
+        <span class="kw">try</span> {
+            listener = <span class="kw">new</span> <span class="bu">ServerSocket</span>(PORT);
+            <span class="kw">while</span>(<span class="kw">true</span>) {
+                <span class="co">// Socket a = listener.accept();</span>
+                <span class="co">// Handler h = new Handler(a);</span>
+                <span class="co">// h.start();</span>
+                <span class="kw">new</span> <span class="bu">Handler</span>(listener.<span class="fu">accept</span>()).<span class="fu">start</span>();
+            }
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span>{
+                listener.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e){
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> <span class="bu">Handler</span> <span class="kw">extends</span> <span class="bu">Thread</span> {
+        <span class="kw">private</span> <span class="bu">Socket</span> socket;
+        <span class="kw">public</span> <span class="bu">Handler</span>(<span class="bu">Socket</span> socket) {
+            <span class="kw">this</span>.<span class="fu">socket</span> = socket;
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="kw">try</span> {
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;New connection started on thread &quot;</span> + <span class="kw">this</span>.<span class="fu">getName</span>());
+                <span class="bu">PrintWriter</span> out = <span class="kw">new</span> <span class="bu">PrintWriter</span>(socket.<span class="fu">getOutputStream</span>(),<span class="kw">true</span>);
+                out.<span class="fu">println</span>(<span class="st">&quot;Hello - welcome to the date server. You&#39;re on thread &quot;</span> + <span class="kw">this</span>.<span class="fu">getName</span>());
+                <span class="kw">while</span>(<span class="kw">true</span>) {
+                    <span class="bu">String</span> message = (<span class="kw">new</span> <span class="bu">Date</span>()).<span class="fu">toString</span>();
+                    out.<span class="fu">println</span>(message);
+                    <span class="bu">Thread</span>.<span class="fu">sleep</span>(<span class="dv">500</span>);
+                }
+            }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }<span class="kw">finally</span> {
+                <span class="kw">try</span> {
+                    <span class="kw">this</span>.<span class="fu">socket</span>.<span class="fu">close</span>();
+                }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                    e.<span class="fu">printStackTrace</span>();
+                }
+            }
+        }
+    }
+}</code></pre></div>
+<hr />
+<h2 id="two-way-communication">Two-way communication</h2>
+<ul>
+<li>If we want to be able to send and receive messages from both the client and the server we need more threads.</li>
+<li>On each side, a Thread to read and a Thread to write</li>
+<li><code>Reader.java</code> and <code>Writer.java</code> are simple classes that implement <code>Runnable</code> for reading and writing</li>
+</ul>
+<hr />
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.util.Scanner;</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="bu">Reader</span> <span class="kw">implements</span> <span class="bu">Runnable</span> {
+    <span class="kw">private</span> <span class="bu">Socket</span> socket;
+    <span class="kw">public</span> <span class="bu">Reader</span>(<span class="bu">Socket</span> s) {
+        <span class="kw">this</span>.<span class="fu">socket</span> = s;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">try</span> {
+            <span class="bu">Scanner</span> sc = <span class="kw">new</span> <span class="bu">Scanner</span>(<span class="kw">this</span>.<span class="fu">socket</span>.<span class="fu">getInputStream</span>());
+            <span class="kw">while</span>(sc.<span class="fu">hasNextLine</span>()) {
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(sc.<span class="fu">nextLine</span>());
+            }
+            sc.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.OutputStreamWriter;</span>
+<span class="kw">import</span><span class="im"> java.util.Scanner;</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="bu">Writer</span> <span class="kw">implements</span> <span class="bu">Runnable</span> {
+    <span class="kw">private</span> <span class="bu">Socket</span> socket;
+    <span class="kw">public</span> <span class="bu">Writer</span>(<span class="bu">Socket</span> s) {
+        <span class="kw">this</span>.<span class="fu">socket</span> = s;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">try</span> {
+            <span class="bu">Scanner</span> sc = <span class="kw">new</span> <span class="bu">Scanner</span>(<span class="bu">System</span>.<span class="fu">in</span>);
+            <span class="bu">OutputStreamWriter</span> os = <span class="kw">new</span> <span class="bu">OutputStreamWriter</span>(socket.<span class="fu">getOutputStream</span>());
+            <span class="bu">String</span> line;
+            <span class="kw">while</span>(!(line = sc.<span class="fu">nextLine</span>()).<span class="fu">equals</span>(<span class="st">&quot;END&quot;</span>)) {
+                os.<span class="fu">write</span>(line + <span class="ch">&#39;\n&#39;</span>);
+                os.<span class="fu">flush</span>();
+            }
+            sc.<span class="fu">close</span>();
+            os.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+}</code></pre></div>
+<ul>
+<li><code>WalkyTalkyServer.java</code> is a server that creates a <code>Reader</code> and <code>Writer</code> when a client connects</li>
+<li><code>WalkyTalkyClient.java</code> is the same, for a client</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.net.ServerSocket;</span>
+<span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">public</span> <span class="kw">class</span> WalkyTalkyServer {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">ServerSocket</span> s = <span class="kw">null</span>;
+        <span class="bu">Socket</span> client = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            s = <span class="kw">new</span> <span class="bu">ServerSocket</span>(<span class="dv">8765</span>);
+            client = s.<span class="fu">accept</span>();
+            <span class="bu">Thread</span> readThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Reader</span>(client));
+            <span class="bu">Thread</span> writeThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Writer</span>(client));
+            readThread.<span class="fu">start</span>();
+            writeThread.<span class="fu">start</span>();
+            <span class="kw">try</span> {
+                readThread.<span class="fu">join</span>();
+                writeThread.<span class="fu">join</span>();
+            }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                client.<span class="fu">close</span>();
+                s.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">public</span> <span class="kw">class</span> WalkyTalkyClient {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Socket</span> server = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            server = <span class="kw">new</span> <span class="bu">Socket</span>(<span class="st">&quot;127.0.0.1&quot;</span>,<span class="dv">8765</span>);
+            <span class="bu">Thread</span> readThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Reader</span>(server));
+            <span class="bu">Thread</span> writeThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Writer</span>(server));
+            readThread.<span class="fu">start</span>();
+            writeThread.<span class="fu">start</span>();
+            readThread.<span class="fu">join</span>();
+            writeThread.<span class="fu">join</span>();
+        }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                server.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+}</code></pre></div>
+<hr />
+<h2 id="sending-other-objects---serializable">Sending other objects - Serializable</h2>
+<ul>
+<li>We are not restricted to just sending characters</li>
+<li>Any <code>Serializable</code> object can be sent down a <code>Stream</code></li>
+<li>A <code>Serializable</code> object is one that implements the <code>Serializable</code> interface
+<ul>
+<li>Normally no methods have to be overwritten</li>
+</ul></li>
+<li><code>ObjectOutputStream</code> and <code>ObjectInputStream</code> allow us to send and receive <code>Serializable</code> objects</li>
+<li><code>MessageServer.java</code>, <code>Message.java</code> and <code>MessageClient.java</code></li>
+</ul>
+<p>The following class, <code>Message</code> is an object that we will transmit. It implements <code>Serializable</code> but this doesn't require implementing any methods.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.Serializable;</span>
+<span class="kw">public</span> <span class="kw">class</span> Message <span class="kw">implements</span> <span class="bu">Serializable</span> {
+    <span class="kw">private</span> <span class="bu">String</span> messageText;
+    <span class="kw">private</span> <span class="bu">String</span> senderName;
+    <span class="kw">public</span> <span class="fu">Message</span>(<span class="bu">String</span> messageText, <span class="bu">String</span> senderName) {
+        <span class="kw">this</span>.<span class="fu">messageText</span> = messageText;
+        <span class="kw">this</span>.<span class="fu">senderName</span> = senderName;
+    }
+    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">toString</span>() {
+        <span class="kw">return</span> <span class="kw">this</span>.<span class="fu">senderName</span> + <span class="st">&quot;: &quot;</span> + <span class="kw">this</span>.<span class="fu">messageText</span>;
+    }
+}</code></pre></div>
+<p><code>Reader</code> and <code>Writer</code> are very similar to the previous example, but now send and receive <code>Message</code> objects. Note that the reader has to catch the <code>ClassNotFoundException</code> in case the object that appears is of a class that this code doesn't know about.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectInputStream;</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="bu">Reader</span> <span class="kw">implements</span> <span class="bu">Runnable</span> {
+    <span class="kw">private</span> <span class="bu">Socket</span> socket;
+    <span class="kw">public</span> <span class="bu">Reader</span>(<span class="bu">Socket</span> s) {
+        <span class="kw">this</span>.<span class="fu">socket</span> = s;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">try</span> {
+            <span class="bu">ObjectInputStream</span> sc = <span class="kw">new</span> <span class="bu">ObjectInputStream</span>(<span class="kw">this</span>.<span class="fu">socket</span>.<span class="fu">getInputStream</span>());
+            Message message;
+            <span class="kw">while</span>((message = (Message)sc.<span class="fu">readObject</span>())!=<span class="kw">null</span>) {
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(message);
+            }
+            sc.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">ClassNotFoundException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectOutputStream;;</span>
+<span class="kw">import</span><span class="im"> java.util.Scanner;</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="bu">Writer</span> <span class="kw">implements</span> <span class="bu">Runnable</span> {
+    <span class="kw">private</span> <span class="bu">Socket</span> socket;
+    <span class="kw">public</span> <span class="bu">Writer</span>(<span class="bu">Socket</span> s) {
+        <span class="kw">this</span>.<span class="fu">socket</span> = s;
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">try</span> {
+            <span class="bu">Scanner</span> sc = <span class="kw">new</span> <span class="bu">Scanner</span>(<span class="bu">System</span>.<span class="fu">in</span>);
+            <span class="bu">ObjectOutputStream</span> os = <span class="kw">new</span> <span class="bu">ObjectOutputStream</span>(socket.<span class="fu">getOutputStream</span>());
+            <span class="bu">String</span> line;
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;What is your name?&quot;</span>);
+            <span class="bu">String</span> name = sc.<span class="fu">nextLine</span>();
+            <span class="kw">while</span>(!(line = sc.<span class="fu">nextLine</span>()).<span class="fu">equals</span>(<span class="st">&quot;END&quot;</span>)) {
+                os.<span class="fu">writeObject</span>(<span class="kw">new</span> <span class="fu">Message</span>(line,name));
+            }
+            sc.<span class="fu">close</span>();
+            os.<span class="fu">close</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+}</code></pre></div>
+<p>The server and client are almost identical to the previous example.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">public</span> <span class="kw">class</span> MessageServer {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">ServerSocket</span> s = <span class="kw">null</span>;
+        <span class="bu">Socket</span> client = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            s = <span class="kw">new</span> <span class="bu">ServerSocket</span>(<span class="dv">8765</span>);
+            client = s.<span class="fu">accept</span>();
+            <span class="bu">Thread</span> readThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Reader</span>(client));
+            <span class="bu">Thread</span> writeThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Writer</span>(client));
+            readThread.<span class="fu">start</span>();
+            writeThread.<span class="fu">start</span>();
+            <span class="kw">try</span> {
+                readThread.<span class="fu">join</span>();
+                writeThread.<span class="fu">join</span>();
+            }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                client.<span class="fu">close</span>();
+                s.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">public</span> <span class="kw">class</span> MessageClient {
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Socket</span> server = <span class="kw">null</span>;
+        <span class="kw">try</span> {
+            server = <span class="kw">new</span> <span class="bu">Socket</span>(<span class="st">&quot;127.0.0.1&quot;</span>,<span class="dv">8765</span>);
+            <span class="bu">Thread</span> readThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Reader</span>(server));
+            <span class="bu">Thread</span> writeThread = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="bu">Writer</span>(server));
+            readThread.<span class="fu">start</span>();
+            writeThread.<span class="fu">start</span>();
+            readThread.<span class="fu">join</span>();
+            writeThread.<span class="fu">join</span>();
+        }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }<span class="kw">finally</span> {
+            <span class="kw">try</span> {
+                server.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+}</code></pre></div>
+<hr />
+<h2 id="serialiazable"> Serialiazable</h2>
+<ul>
+<li>Any object within the object we are Searalizing must also be Serializable</li>
+<li>If there are attributes that you don't want to encode, use the decorator <code>transient</code></li>
+<li>As well as being transmitted, objects can also be written to files:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">FileOutputStream</span> fileOutputStream = 
+    <span class="kw">new</span> <span class="bu">FileOutputStream</span>(<span class="st">&quot;yourfile2.txt&quot;</span>);
+<span class="bu">ObjectOutputStream</span> objectOutputStream = 
+    <span class="kw">new</span> <span class="bu">ObjectOutputStream</span>(fileOutputStream);
+objectOutputStream.<span class="fu">writeObject</span>(e);
+objectOutputStream.<span class="fu">flush</span>();
+objectOutputStream.<span class="fu">close</span>(); </code></pre></div>
 <hr />
 <h2 id="working-in-swing">Working in Swing</h2>
 <ul>
@@ -255,6 +759,215 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Example: <code>QuestionServer</code> and <code>QuestionClient</code></li>
 </ul>
 <hr />
-<h2 id="design-exercise---chatroom-application">Design exercise - Chatroom Application</h2>
+<h2 id="swing-chat-client">Swing Chat Client</h2>
+<ul>
+<li><code>ChatServer.java</code> is a multi-threaded Server than can handle multiple clients</li>
+<li>When it receives a message from one client, it transmits it to all</li>
+<li><code>MessageClient</code> is the client we used in a previous example. It works from the console.</li>
+<li><code>SwingChatClient</code> is a Swing based client that can interact with the same server</li>
+<li>It has a class that extends <code>SwingWorker</code> for reading messages</li>
+</ul>
+<p>The server:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectInputStream;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectOutputStream;</span>
+<span class="kw">import</span><span class="im"> java.net.ServerSocket;</span>
+<span class="kw">import</span><span class="im"> java.net.Socket;</span>
+<span class="kw">import</span><span class="im"> java.util.ArrayList;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> ChatServer <span class="kw">implements</span> <span class="bu">Runnable</span>{
+    <span class="kw">private</span> <span class="kw">class</span> ClientRunner <span class="kw">implements</span> <span class="bu">Runnable</span> {
+        <span class="kw">private</span> <span class="bu">Socket</span> s = <span class="kw">null</span>;
+        <span class="kw">private</span> ChatServer parent = <span class="kw">null</span>;
+        <span class="kw">private</span> <span class="bu">ObjectInputStream</span> inputStream = <span class="kw">null</span>;
+        <span class="kw">private</span> <span class="bu">ObjectOutputStream</span> outputStream = <span class="kw">null</span>;
+        <span class="kw">public</span> <span class="fu">ClientRunner</span>(<span class="bu">Socket</span> s,ChatServer parent) {
+            <span class="kw">this</span>.<span class="fu">s</span> = s;
+            <span class="kw">this</span>.<span class="fu">parent</span> = parent;
+            <span class="kw">try</span> {
+                outputStream = <span class="kw">new</span> <span class="bu">ObjectOutputStream</span>(<span class="kw">this</span>.<span class="fu">s</span>.<span class="fu">getOutputStream</span>());
+                inputStream = <span class="kw">new</span> <span class="bu">ObjectInputStream</span>(<span class="kw">this</span>.<span class="fu">s</span>.<span class="fu">getInputStream</span>());
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+            <span class="co">// receive messages</span>
+            <span class="kw">try</span> {
+                Message message = <span class="kw">null</span>;
+                <span class="kw">while</span>((message = (Message)inputStream.<span class="fu">readObject</span>())!= <span class="kw">null</span>) {
+                    <span class="kw">this</span>.<span class="fu">parent</span>.<span class="fu">transmit</span>(message);
+                }
+                inputStream.<span class="fu">close</span>();
+            }<span class="kw">catch</span>(<span class="bu">ClassNotFoundException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">transmitMessage</span>(Message m) {
+            <span class="kw">try</span> {
+                outputStream.<span class="fu">writeObject</span>(m);
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+    <span class="kw">private</span> <span class="bu">ServerSocket</span> server;
+    <span class="kw">private</span> <span class="bu">ArrayList</span>&lt;ClientRunner&gt; clients = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;ClientRunner&gt;();
+    <span class="kw">public</span> <span class="fu">ChatServer</span>() {
+        <span class="kw">try</span> {
+            server = <span class="kw">new</span> <span class="bu">ServerSocket</span>(<span class="dv">8765</span>);
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
+        <span class="kw">while</span>(<span class="kw">true</span>) {
+            <span class="bu">Socket</span> clientSocket = <span class="kw">null</span>;
+            <span class="kw">try</span> {
+                clientSocket = server.<span class="fu">accept</span>();
+                <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;New client connected&quot;</span>);
+                ClientRunner client = <span class="kw">new</span> <span class="fu">ClientRunner</span>(clientSocket,<span class="kw">this</span>);
+                clients.<span class="fu">add</span>(client);
+                <span class="kw">new</span> <span class="bu">Thread</span>(client).<span class="fu">start</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">transmit</span>(Message m) {
+        <span class="kw">for</span>(ClientRunner c: clients) {
+            <span class="kw">if</span>(c != <span class="kw">null</span>) {
+                c.<span class="fu">transmitMessage</span>(m);
+            }
+        }
+    }
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="bu">Thread</span> t = <span class="kw">new</span> <span class="bu">Thread</span>(<span class="kw">new</span> <span class="fu">ChatServer</span>());
+        t.<span class="fu">start</span>();
+        <span class="kw">try</span> {
+            t.<span class="fu">join</span>();
+        }<span class="kw">catch</span>(<span class="bu">InterruptedException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+        
+    }
+}</code></pre></div>
+<p>The swing client</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">import</span><span class="im"> javax.swing.JButton;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JFrame;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JOptionPane;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JPanel;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JScrollPane;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JTextArea;</span>
+<span class="kw">import</span><span class="im"> javax.swing.JTextField;</span>
+<span class="kw">import</span><span class="im"> javax.swing.SwingWorker;</span>
+
+<span class="kw">import</span><span class="im"> java.awt.BorderLayout;</span>
+<span class="kw">import</span><span class="im"> java.awt.event.ActionEvent;</span>
+<span class="kw">import</span><span class="im"> java.awt.event.ActionListener;</span>
+<span class="kw">import</span><span class="im"> java.io.IOException;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectInputStream;</span>
+<span class="kw">import</span><span class="im"> java.io.ObjectOutputStream;</span>
+<span class="kw">import</span><span class="im"> java.net.Socket;</span>
+
+<span class="kw">public</span> <span class="kw">class</span> SwingChatClient <span class="kw">extends</span> <span class="bu">JFrame</span> <span class="kw">implements</span> <span class="bu">ActionListener</span> {
+
+    <span class="kw">private</span> <span class="kw">class</span> ReadWorker <span class="kw">extends</span> <span class="bu">SwingWorker</span>&lt;<span class="bu">Void</span>,<span class="bu">Void</span>&gt; {
+        <span class="kw">private</span> <span class="bu">Socket</span> socket = <span class="kw">null</span>;
+        <span class="kw">private</span> <span class="bu">ObjectInputStream</span> inputStream = <span class="kw">null</span>;
+        <span class="kw">private</span> SwingChatClient parent;
+        <span class="kw">public</span> <span class="fu">ReadWorker</span>(<span class="bu">Socket</span> s, SwingChatClient parent) {
+            <span class="kw">this</span>.<span class="fu">socket</span> = s;
+            <span class="kw">this</span>.<span class="fu">parent</span> = parent;
+            <span class="kw">try</span> {
+                inputStream = <span class="kw">new</span> <span class="bu">ObjectInputStream</span>(<span class="kw">this</span>.<span class="fu">socket</span>.<span class="fu">getInputStream</span>());
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }
+        }
+        <span class="kw">public</span> <span class="bu">Void</span> <span class="fu">doInBackground</span>() {
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Started read worker&quot;</span>);
+            Message m = <span class="kw">null</span>;
+            <span class="kw">try</span> {
+                <span class="kw">while</span>((m = (Message)inputStream.<span class="fu">readObject</span>())!= <span class="kw">null</span>) {
+                    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(m);
+                    parent.<span class="fu">display</span>(m);
+                }
+            }<span class="kw">catch</span>(<span class="bu">ClassNotFoundException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+                e.<span class="fu">printStackTrace</span>();
+            }<span class="kw">finally</span> {
+                <span class="kw">return</span> <span class="kw">null</span>;
+            }
+        }
+    }
+
+    <span class="kw">private</span> <span class="bu">Socket</span> server = <span class="kw">null</span>;
+    <span class="kw">private</span> <span class="bu">JTextArea</span> textArea;
+    <span class="kw">private</span> <span class="bu">ObjectOutputStream</span> outputStream;
+    <span class="kw">private</span> <span class="bu">JTextField</span> messageField;
+    <span class="kw">private</span> <span class="bu">JButton</span> sendButton;
+    <span class="kw">private</span> <span class="bu">String</span> name = <span class="st">&quot;Sarah&quot;</span>;
+    <span class="kw">public</span> <span class="fu">SwingChatClient</span>() {
+        <span class="kw">this</span>.<span class="fu">setSize</span>(<span class="dv">800</span>,<span class="dv">500</span>);
+        <span class="kw">this</span>.<span class="fu">setDefaultCloseOperation</span>(<span class="bu">JFrame</span>.<span class="fu">EXIT_ON_CLOSE</span>);
+        name = <span class="bu">JOptionPane</span>.<span class="fu">showInputDialog</span>(<span class="kw">this</span>, <span class="st">&quot;What&#39;s your name?&quot;</span>);
+        <span class="bu">JPanel</span> panel = <span class="kw">new</span> <span class="bu">JPanel</span>(<span class="kw">new</span> <span class="bu">BorderLayout</span>());
+        textArea = <span class="kw">new</span> <span class="bu">JTextArea</span>(<span class="dv">10</span>, <span class="dv">40</span>);
+        panel.<span class="fu">add</span>(<span class="kw">new</span> <span class="bu">JScrollPane</span>(textArea),<span class="bu">BorderLayout</span>.<span class="fu">CENTER</span>);
+        <span class="kw">this</span>.<span class="fu">add</span>(panel);
+
+        <span class="bu">JPanel</span> bottomPanel = <span class="kw">new</span> <span class="bu">JPanel</span>();
+        messageField = <span class="kw">new</span> <span class="bu">JTextField</span>(<span class="dv">40</span>);
+        sendButton = <span class="kw">new</span> <span class="bu">JButton</span>(<span class="st">&quot;Send&quot;</span>);
+        sendButton.<span class="fu">addActionListener</span>(<span class="kw">this</span>);
+        bottomPanel.<span class="fu">add</span>(messageField);
+        bottomPanel.<span class="fu">add</span>(sendButton);
+        panel.<span class="fu">add</span>(bottomPanel,<span class="bu">BorderLayout</span>.<span class="fu">SOUTH</span>);
+
+        <span class="kw">this</span>.<span class="fu">setVisible</span>(<span class="kw">true</span>);
+
+        <span class="fu">connect</span>();
+
+        <span class="kw">try</span> {
+            outputStream = <span class="kw">new</span> <span class="bu">ObjectOutputStream</span>(server.<span class="fu">getOutputStream</span>());
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+
+        ReadWorker rw = <span class="kw">new</span> <span class="fu">ReadWorker</span>(server,<span class="kw">this</span>);
+        rw.<span class="fu">execute</span>();
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;HERE&quot;</span>);
+    }
+    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">connect</span>() {
+        <span class="kw">try</span> {
+            server = <span class="kw">new</span> <span class="bu">Socket</span>(<span class="st">&quot;127.0.0.1&quot;</span>,<span class="dv">8765</span>);
+            <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Connected&quot;</span>);
+        }<span class="kw">catch</span>(<span class="bu">IOException</span> e) {
+            e.<span class="fu">printStackTrace</span>();
+        }
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">display</span>(Message m) {
+        textArea.<span class="fu">append</span>(m.<span class="fu">toString</span>() + <span class="ch">&#39;\n&#39;</span>);
+    }
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">actionPerformed</span>(<span class="bu">ActionEvent</span> e) {
+        <span class="kw">if</span>(e.<span class="fu">getSource</span>() == sendButton) {
+            <span class="bu">String</span> messageText = messageField.<span class="fu">getText</span>();
+            <span class="kw">try</span> {
+                outputStream.<span class="fu">writeObject</span>(<span class="kw">new</span> <span class="fu">Message</span>(messageText,name));
+                messageField.<span class="fu">setText</span>(<span class="st">&quot;&quot;</span>);
+            }<span class="kw">catch</span>(<span class="bu">IOException</span> ex) {
+                ex.<span class="fu">printStackTrace</span>();
+            }
+        }
+    }
+
+    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+        <span class="kw">new</span> <span class="fu">SwingChatClient</span>();
+    }
+}</code></pre></div>
 </body>
 </html>

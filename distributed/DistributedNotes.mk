@@ -218,7 +218,6 @@ endnotesonly
 - This process is repeated to send longer messages
 - When the Server is closed, the client will read -1
 - Note that `OutputStreamWriter` can also take a `String`
-- `Server.java` and `Client.java`
 
 ----
 
@@ -412,7 +411,6 @@ public class DateClient {
 
 endnotesonly
 
-----
 
 - To allow for multiple connections, we need multiple threads in the server (one per client)
 - We put the server work (sending the date) into an object that extends `Thread`
@@ -621,6 +619,177 @@ public class WalkyTalkyClient {
 endnotesonly
 
 
+----
+
+## Sending other objects - Serializable
+
+- We are not restricted to just sending characters
+- Any `Serializable` object can be sent down a `Stream`
+- A `Serializable` object is one that implements the `Serializable` interface
+	- Normally no methods have to be overwritten
+- `ObjectOutputStream` and `ObjectInputStream` allow us to send and receive `Serializable` objects
+- `MessageServer.java`, `Message.java` and `MessageClient.java`
+
+notesonly
+
+The following class, `Message` is an object that we will transmit. It implements `Serializable` but this doesn't require implementing any methods.
+
+~~~~{.java}
+import java.io.Serializable;
+public class Message implements Serializable {
+    private String messageText;
+    private String senderName;
+    public Message(String messageText, String senderName) {
+        this.messageText = messageText;
+        this.senderName = senderName;
+    }
+    public String toString() {
+        return this.senderName + ": " + this.messageText;
+    }
+}
+~~~~
+
+`Reader` and `Writer` are very similar to the previous example, but now send and receive `Message` objects. Note that the reader has to catch the `ClassNotFoundException` in case the object that appears is of a class that this code doesn't know about.
+
+~~~~{.java}
+import java.net.Socket;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+public class Reader implements Runnable {
+    private Socket socket;
+    public Reader(Socket s) {
+        this.socket = s;
+    }
+    public void run() {
+        try {
+            ObjectInputStream sc = new ObjectInputStream(this.socket.getInputStream());
+            Message message;
+            while((message = (Message)sc.readObject())!=null) {
+                System.out.println(message);
+            }
+            sc.close();
+        }catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+~~~~
+
+~~~~{.java}
+import java.net.Socket;
+import java.io.IOException;
+import java.io.ObjectOutputStream;;
+import java.util.Scanner;
+public class Writer implements Runnable {
+    private Socket socket;
+    public Writer(Socket s) {
+        this.socket = s;
+    }
+    public void run() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            ObjectOutputStream os = new ObjectOutputStream(socket.getOutputStream());
+            String line;
+            System.out.println("What is your name?");
+            String name = sc.nextLine();
+            while(!(line = sc.nextLine()).equals("END")) {
+                os.writeObject(new Message(line,name));
+            }
+            sc.close();
+            os.close();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+~~~~
+
+The server and client are almost identical to the previous example.
+
+~~~~{.java}
+import java.net.Socket;
+public class MessageServer {
+    public static void main(String[] args) {
+        ServerSocket s = null;
+        Socket client = null;
+        try {
+            s = new ServerSocket(8765);
+            client = s.accept();
+            Thread readThread = new Thread(new Reader(client));
+            Thread writeThread = new Thread(new Writer(client));
+            readThread.start();
+            writeThread.start();
+            try {
+                readThread.join();
+                writeThread.join();
+            }catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+        }catch(IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                client.close();
+                s.close();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+~~~~
+
+
+~~~~{.java}
+import java.net.Socket;
+import java.io.IOException;
+public class MessageClient {
+    public static void main(String[] args) {
+        Socket server = null;
+        try {
+            server = new Socket("127.0.0.1",8765);
+            Thread readThread = new Thread(new Reader(server));
+            Thread writeThread = new Thread(new Writer(server));
+            readThread.start();
+            writeThread.start();
+            readThread.join();
+            writeThread.join();
+        }catch(InterruptedException e) {
+            e.printStackTrace();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                server.close();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+~~~~
+
+endnotesonly
+
+----
+
+## Serialiazable
+
+- Any object within the object we are Searalizing must also be Serializable
+- If there are attributes that you don't want to encode, use the decorator `transient`
+- As well as being transmitted, objects can also be written to files:
+
+~~~~{.java}
+FileOutputStream fileOutputStream = 
+	new FileOutputStream("yourfile2.txt");
+ObjectOutputStream objectOutputStream = 
+	new ObjectOutputStream(fileOutputStream);
+objectOutputStream.writeObject(e);
+objectOutputStream.flush();
+objectOutputStream.close(); 
+~~~~
 
 
 ----
@@ -635,6 +804,225 @@ endnotesonly
 
 ----
 
-## Design exercise - Chatroom Application
+## Swing Chat Client
 
+- `ChatServer.java` is a multi-threaded Server than can handle multiple clients
+- When it receives a message from one client, it transmits it to all
+- `MessageClient` is the client we used in a previous example. It works from the console.
+- `SwingChatClient` is a Swing based client that can interact with the same server
+- It has a class that extends `SwingWorker` for reading messages
+
+notesonly
+
+The server:
+
+~~~~{.java}
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+public class ChatServer implements Runnable{
+    private class ClientRunner implements Runnable {
+        private Socket s = null;
+        private ChatServer parent = null;
+        private ObjectInputStream inputStream = null;
+        private ObjectOutputStream outputStream = null;
+        public ClientRunner(Socket s,ChatServer parent) {
+            this.s = s;
+            this.parent = parent;
+            try {
+                outputStream = new ObjectOutputStream(this.s.getOutputStream());
+                inputStream = new ObjectInputStream(this.s.getInputStream());
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void run() {
+            // receive messages
+            try {
+                Message message = null;
+                while((message = (Message)inputStream.readObject())!= null) {
+                    this.parent.transmit(message);
+                }
+                inputStream.close();
+            }catch(ClassNotFoundException e) {
+                e.printStackTrace();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void transmitMessage(Message m) {
+            try {
+                outputStream.writeObject(m);
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private ServerSocket server;
+    private ArrayList<ClientRunner> clients = new ArrayList<ClientRunner>();
+    public ChatServer() {
+        try {
+            server = new ServerSocket(8765);
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void run() {
+        while(true) {
+            Socket clientSocket = null;
+            try {
+                clientSocket = server.accept();
+                System.out.println("New client connected");
+                ClientRunner client = new ClientRunner(clientSocket,this);
+                clients.add(client);
+                new Thread(client).start();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void transmit(Message m) {
+        for(ClientRunner c: clients) {
+            if(c != null) {
+                c.transmitMessage(m);
+            }
+        }
+    }
+    public static void main(String[] args) {
+        Thread t = new Thread(new ChatServer());
+        t.start();
+        try {
+            t.join();
+        }catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+    }
+}
+~~~~
+
+The swing client
+
+~~~~{.java}
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+public class SwingChatClient extends JFrame implements ActionListener {
+
+    private class ReadWorker extends SwingWorker<Void,Void> {
+        private Socket socket = null;
+        private ObjectInputStream inputStream = null;
+        private SwingChatClient parent;
+        public ReadWorker(Socket s, SwingChatClient parent) {
+            this.socket = s;
+            this.parent = parent;
+            try {
+                inputStream = new ObjectInputStream(this.socket.getInputStream());
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public Void doInBackground() {
+            System.out.println("Started read worker");
+            Message m = null;
+            try {
+                while((m = (Message)inputStream.readObject())!= null) {
+                    System.out.println(m);
+                    parent.display(m);
+                }
+            }catch(ClassNotFoundException e) {
+                e.printStackTrace();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }finally {
+                return null;
+            }
+        }
+    }
+
+    private Socket server = null;
+    private JTextArea textArea;
+    private ObjectOutputStream outputStream;
+    private JTextField messageField;
+    private JButton sendButton;
+    private String name = "Sarah";
+    public SwingChatClient() {
+        this.setSize(800,500);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        name = JOptionPane.showInputDialog(this, "What's your name?");
+        JPanel panel = new JPanel(new BorderLayout());
+        textArea = new JTextArea(10, 40);
+        panel.add(new JScrollPane(textArea),BorderLayout.CENTER);
+        this.add(panel);
+
+        JPanel bottomPanel = new JPanel();
+        messageField = new JTextField(40);
+        sendButton = new JButton("Send");
+        sendButton.addActionListener(this);
+        bottomPanel.add(messageField);
+        bottomPanel.add(sendButton);
+        panel.add(bottomPanel,BorderLayout.SOUTH);
+
+        this.setVisible(true);
+
+        connect();
+
+        try {
+            outputStream = new ObjectOutputStream(server.getOutputStream());
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        ReadWorker rw = new ReadWorker(server,this);
+        rw.execute();
+        System.out.println("HERE");
+    }
+    private void connect() {
+        try {
+            server = new Socket("127.0.0.1",8765);
+            System.out.println("Connected");
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void display(Message m) {
+        textArea.append(m.toString() + '\n');
+    }
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == sendButton) {
+            String messageText = messageField.getText();
+            try {
+                outputStream.writeObject(new Message(messageText,name));
+                messageField.setText("");
+            }catch(IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new SwingChatClient();
+    }
+}
+~~~~
+
+endnotesonly
 
