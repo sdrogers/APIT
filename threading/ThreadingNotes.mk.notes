@@ -1,6 +1,6 @@
 % APIT: Concurrency
 % Simon Rogers
-% 05/01/2018
+% 13/01/2019
 
 # Overview
 
@@ -19,7 +19,7 @@
 	- Efficient integration with slow devices (e.g. disks)
 	- User-friendly-ness (responsive OS)
 - [Useful (but oldish) paper](https://birrell.org/andrew/papers/035-Threads.pdf)
-- In Java, we can use `threads` to build concurrent programs
+- In Java, we can use `Threads` to build concurrent programs
 
 ----
  
@@ -34,7 +34,7 @@
 
 # Motivating Example
 
- - Making a GUI programme that will count down in a number of seconds entered into a JTextField when a button is pressed
+ - Making a GUI programme that will count down (couting down every 5th of a second) a number entered into a JTextField when a button is pressed
  - `BadFrame.java`: obvious solution doesn't work
  - `GoodFrame.java`: needs threads.
  	- In this case, things are complicated by the use of Swing to make the GUI.
@@ -51,7 +51,7 @@ To understand why `BadFrame.java` doesn't work you have to think a bit about how
  - Our previous objects have all been passive
  - `Thread` objects are active:
  	- They have attributes and methods
- 	- But they also run by themselves!
+ 	- And each one has its own *point of execution* - i.e. they start running by themselves
 
 ----
 
@@ -106,7 +106,7 @@ public class PointlessPrint implements Runnable {
 
 ----
 
-To use this class, we must create an instance and then place this instance within an instance of the `Thread` object:
+To use this class, we must create an instance and then place this instance within an instance of the `Thread` class:
 
 ~~~~ {.java}
 public class RunnableTest {
@@ -120,8 +120,6 @@ public class RunnableTest {
 
 `t.start()` starts the thread by invoking the `run()` method of `PointlessPrint`
 
-
-----
 
 From now on, we'll use nested classes for things like this, to make the code a bit more concise:
 
@@ -150,6 +148,8 @@ public class RunnableTest {
 
 *Question:* What would happen if `PointlessPrint` wasn't `static`?
 
+*Answer:* You'd have to do this...
+
 
 ~~~~ {.java}
 public class RunnableTest2 {
@@ -177,9 +177,9 @@ public class RunnableTest2 {
 ~~~~
 
 
-----------
+----
 
-The whole point of threads is that we can simultaneously create many of them. This is straightforward via an array of `Thread` objects:
+Creating many threads is straightforward via an array of `Thread` objects:
 
 ~~~~ {.java}
 public static void main(String[] args) {
@@ -194,6 +194,11 @@ public static void main(String[] args) {
 	}
 }
 ~~~~
+
+
+In this example, satisfy yourself that even though each new `PointlessPrint` object is stored using the same reference, they are all different.
+
+
 
 ----
 
@@ -299,7 +304,14 @@ public class SimpleThreadTest {
 ~~~~
 
 
-## You've been using threads all along
+## Extending v Implementing
+
+- Extending `Thread` might seem appealing as it saves some lines
+- But remember - classes can only extend one other class
+- Often, implementing `Runnable` will be more sensible
+
+
+## Have you been paying attention?!
 
 Can you predict the output of this?
 
@@ -342,7 +354,12 @@ Thread t = new Thread("my name");
 thread.getName()
 ~~~~
 
-- See notes for examples
+----
+
+- See notes for full examples
+- But...within a class that extends `Thread`: use `this.getName()` (or just `getName()`)
+- Within a class that extends `Runnable` you have to obtain the relevant `Thread` object with `Thread.currentThread()`
+- So: `Thread.currentThread().getName()`
 
 
 Example when implementing `Runnable`:
@@ -397,7 +414,7 @@ public class ThreadNameTest2 {
 ~~~~
 
 
----
+----
 
 ## Blocking methods
 
@@ -405,7 +422,7 @@ public class ThreadNameTest2 {
 	- Waiting for a timer to elapse
 	- Waiting for another thread to end
 - Because these methods rely on something external, they might be waiting forever.
-- To ensure smooth running, they should be *cancelable*
+- To ensure smooth running, they have to be *cancelable*
 
 ----
 
@@ -449,7 +466,8 @@ public class InterruptTest {
 
 ## Sleeping threads
 
-- `Thread.sleep(long time)` is a blocking method which can be stopped by interrupting. If this happens, it throws `InterruptedException` so we must catch it somewhere:
+- `Thread.sleep(long time)` is a blocking method that can be stopped by interrupting. If this happens, it throws `InterruptedException`
+- `InterruptedException` has to be caught:
 
 ~~~~ {.java}
 public void run() {
@@ -503,10 +521,11 @@ for(int i=0;i<5;i++) {
 ~~~~
 
 Why?
+
 ----
 
 
-After starting the first thread, the thread running `main` then waits for it to finish before starting the second one! This is a very common mistake.
+After starting the first thread, the thread running `main` then waits for it to finish before starting the second one and we get no concurrency! This is a very common mistake.
 
 
 ----
@@ -662,7 +681,7 @@ The problem is found in the `run()` method:
 - All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)
 - A thread can lock a monitor, ensuring no other threads can modify it
 - Other threads trying are blocked until the lock is released
-- The easiest way is with `synchonized` blocks and methods.
+- The easiest way is with `synchronized` blocks and methods.
 
 ----
 
@@ -670,7 +689,7 @@ The problem is found in the `run()` method:
 - Note that the incrementation is now done inside the class
 - It still has the same problem, although perhaps not as extreme (try it and see. Why? Think about how `count++` is done and the chances of being interrupted at a bad point)
 - We can solve our race condition by making the `increment()` a synchronised method
-	- when any thread is invoking a synchronized method, all other threads trying to are paused until it has finished
+	- when any thread is invoking a synchronized method, all other threads trying to invoke it are paused until it has finished
 - See `CounterExample4` ... problem solved
 
 ----
@@ -714,12 +733,11 @@ public static class MyCounter {
 }
 ~~~~
 
-- When `counterLock` is locked, no other thread can lock it until it has been unlocked (Phonebooth analogy in BigJava)
+- When `counterLock` is locked, no other thread can lock it until it has been unlocked
 
 ----
 
 - There's a problem: if the code between `lock` and `unlock` throws an exception the `unlock` never happens
-	- Phonebooth user collapsing??
 - Always do the following to ensure the lock is released:
 
 ~~~~ {.java}
@@ -740,7 +758,7 @@ finally {
 - The program will hang indefinitely
 - This is a *deadlock*
 - For example, suppose adding another object to our `CounterExample` that decrements `MyCounter`
-	- If we set the system up so that in total the same amount is incremented and decremented then `count` will sometimes become negative (depending on ordering of events)
+	- If we set the system up so that in total the same amount is incremented and decremented then `count` might sometimes become negative (depending on ordering of events)
 	- See `CounterDecounter`
 
 ----
@@ -835,7 +853,6 @@ public void increment(int amount) {
 
 - In general Swing is not thread safe
 	- You can't use normal threads
-	- Ignore everything up until now!
 - But, Swing does give you threading capabilities
 - First, why do we need threads in Swing?
 	- `SwingThread`

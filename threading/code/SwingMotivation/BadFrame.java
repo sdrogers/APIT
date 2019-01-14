@@ -11,7 +11,7 @@ public class BadFrame extends JFrame implements ActionListener{
 		this.setSize(500,100);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		numberField = new JTextField("5",20);
+		numberField = new JTextField("50",20);
 		startButton = new JButton("Start");
 		startButton.addActionListener(this);
 
@@ -30,7 +30,7 @@ public class BadFrame extends JFrame implements ActionListener{
 			// needs to catch InterruptedExceptions
 			// More on this later
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(200);
 			}catch(InterruptedException ex) {
 				ex.printStackTrace();
 			}

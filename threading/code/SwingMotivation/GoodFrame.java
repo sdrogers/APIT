@@ -23,7 +23,7 @@ public class GoodFrame extends JFrame implements ActionListener {
 		public Void doInBackground() {
 			for(Integer i=this.startVal;i>=0;i--) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(200);
 				}catch(InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -43,7 +43,7 @@ public class GoodFrame extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		
-		numberField = new JTextField("5",20);
+		numberField = new JTextField("50",20);
 		startButton = new JButton("Start");
 		startButton.addActionListener(this);
 		
