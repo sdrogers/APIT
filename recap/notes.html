@@ -75,7 +75,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#immutable-objects">Immutable objects</a></li>
 <li><a href="#call-by-value-and-call-by-reference">Call by value and call by reference</a><ul>
-<li><a href="#mutable-objects">Mutable objects</a></li>
 <li><a href="#final">Final</a></li>
 </ul></li>
 <li><a href="#some-useful-java-objects">Some useful Java objects</a><ul>
@@ -499,62 +498,6 @@ a+=<span class="st">&quot; simon&quot;</span>;</code></pre></div>
 <img src="Figures/stringthing5.jpg" alt="Back in main, s is still a reference to the original object. What happens to the &quot;hello added&quot; string when we return to main?" />
 <p class="caption">Back in main, s is still a reference to the original object. What happens to the &quot;hello added&quot; string when we return to main?</p>
 </div>
-<hr />
-<h2 id="mutable-objects">Mutable objects</h2>
-<ul>
-<li>In <code>StringExample</code> the main method created a new String object <code>s+=&quot; simon&quot;</code></li>
-<li>The original one remained unchanged
-<ul>
-<li>This is because <code>String</code> is <em>immutable</em></li>
-</ul></li>
-<li>What about a mutable object?</li>
-<li><code>MutableNastiness</code></li>
-<li>Returning mutable objects is bad practice</li>
-<li><code>MutableNastinessFixed</code> fixes it by returning a new object</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MutableNastiness {
-    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> MyDouble {
-        <span class="kw">private</span> <span class="bu">Double</span> a;
-        <span class="kw">public</span> <span class="fu">MyDouble</span>(<span class="bu">Double</span> a) {
-            <span class="kw">this</span>.<span class="fu">a</span> = a;
-        }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(<span class="bu">Double</span> m) {
-            a = a * m;
-        }
-        <span class="kw">public</span> <span class="bu">Double</span> <span class="fu">getValue</span>() {
-            <span class="kw">return</span> a;
-        }
-    }
-    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> DoubleWrapper {
-        <span class="kw">private</span> MyDouble d;
-        <span class="kw">public</span> <span class="fu">DoubleWrapper</span>(<span class="bu">Double</span> in) {
-            <span class="kw">this</span>.<span class="fu">d</span> = <span class="kw">new</span> <span class="fu">MyDouble</span>(in);
-        }
-        <span class="kw">public</span> MyDouble <span class="fu">getMyDouble</span>() {
-            <span class="kw">return</span> d;
-        }
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">multiply</span>(<span class="bu">Double</span> m) {
-            d.<span class="fu">multiply</span>(m);
-        }
-        <span class="kw">public</span> <span class="bu">Double</span> <span class="fu">getValue</span>() {
-            <span class="kw">return</span> d.<span class="fu">getValue</span>();
-        }
-    }
-
-    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
-        <span class="co">// Create a Double object</span>
-        DoubleWrapper dw = <span class="kw">new</span> <span class="fu">DoubleWrapper</span>(<span class="fl">3.2</span>);
-        MyDouble d = dw.<span class="fu">getMyDouble</span>();
-        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
-        d.<span class="fu">multiply</span>(<span class="fl">2.0</span>);
-        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(d.<span class="fu">getValue</span>());
-        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(dw.<span class="fu">getValue</span>());
-    }
-}</code></pre></div>
-<p>In this example, <code>DoubleWrapper</code> is used to hold a <code>MyDouble</code> object. When we call <code>getMyDouble()</code> it returns the reference to its own <code>MyDouble</code> object. So, when we subsequently change that object, we are changing the object within <code>DoubleWrapper</code>. This is not good practice as it can result in unpredictable behaviour - someone else changes an object you rely on. To avoid this, try to only ever return immutable objects or new objects. For example, in <code>MutableNastinessFixed</code> the <code>getMyDouble()</code> method is changed to create a new object. Now, changes to the object returned do not change the original:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> MyDouble <span class="fu">getMyDouble</span>() {
-    <span class="kw">return</span> <span class="kw">new</span> <span class="fu">MyDouble</span>(<span class="fu">getValue</span>());
-}</code></pre></div>
 <hr />
 <h2 id="final">Final</h2>
 <ul>

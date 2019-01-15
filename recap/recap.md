@@ -262,6 +262,83 @@ a+=" simon";
 - Objects are stored in the heap, references to objects are stored in the stack
 
 
+notesonly
+
+~~~~ {.java}
+public class CallExamples {
+	public static class MyClass {
+		int a = 0;
+		public MyClass(int a) {
+			this.a = a;
+		}
+		public int getValue() {
+			return a;
+		}
+	}
+	public static class DoubleClass {
+		Double a = 0.0;
+		public DoubleClass(Double a) {
+			this.a = a;
+		}
+		public void multiply(Double m) {
+			a = a * m;
+		}
+		public Double getValue() {
+			return a;
+		}
+	}
+	private static void aTest(MyClass in) {
+		in = new MyClass(5);
+	}
+
+	private static void stringTest(String in) {
+		in = in + " added";
+		System.out.println(in);
+	}
+
+	private static void doubleTest(Double in) {
+		in = in * 2;
+	}
+	private static void doubleObjectTest(DoubleClass in) {
+		in.multiply(2.0);
+	}
+
+	public static void main(String[] args) {
+		MyClass m = new MyClass(3);
+		aTest(m);
+		System.out.println(m.getValue());
+		// What value will be displayed?
+
+
+		String s = "hello";
+		stringTest(s);
+		System.out.println(s);
+		// What will s be?
+
+		Double d = 3.2;
+		doubleTest(d);
+		System.out.println(d);
+		// What will d be?
+
+		DoubleClass d2 = new DoubleClass(3.2);
+		doubleObjectTest(d2);
+		System.out.println(d2.getValue());
+		// What will the value be?
+	}
+}
+~~~~
+
+In the first example, `main` creates an object of type `MyClass` (with value 3). The `aTest()` method is passed the value of the reference to the object (this sentence is important - make sure you understand it!). Inside the `aTest()` method it creates a new object and stores the reference in `in`. So, why don't we see the new object in `main`? It is because Java uses call by value for references and therefore changes to the value are not reflected in the calling scope. When `new` is invoked, the value of `in` changes, but this is the local `in`.
+
+In the second example, we pass the string `"Hello"` to `stringTest`. `stringTest` appends `added` to the String. Why isn't this change seen in `main`? This time it is because String is an immutable type. When it looks like we're changing a String we're actually making a new object. The value of new object reference is stored in the local `in` variable and so isn't seen in `main`.
+
+In the third example, we see the same behaviour, but this time with the immutable Double object instead of a String.
+
+In the final example, we do see the value change reflected in `main`. This is because our `DoubleClass` is mutable. When we pass a `DoubleClass` object around, it's attributes can be changed as long as we never change the value of the reference (by, say, making a new object).
+
+If you're struggling with this, keep in mind what a reference to an object is. Perhaps the best way to think of it is as the address of the bit of memory in which the object is stored. E.g. if you think of memory as a set of pigeon holes, then the reference stores which pigeon hole it is in. When we pass an object reference to a method, it creates its own local copy of the reference and therefore knows where the object is stored, and can  change it (assuming it permits changes). When a new object is created, it is put in a new pigeon hole and the local reference is changed (but not the original). So, in the first example above, the object referenced by `m` is left unchanged when `aTest()` creates a new object. The same thing is happening in examples 2 and 3, even though there is no `new` statement - because String and Double are immutable, new objects are made when we try and change them (see Figures below). In the final example, the reference never changes so the method can make changes to the original object.
+
+endnotesonly
 
 ----
 
@@ -283,21 +360,6 @@ a+=" simon";
 
 ![Back in main, s is still a reference to the original object. What happens to the "hello added" string when we return to main?](Figures/stringthing5.jpg)
 
-----
-
-
-
-## Mutable objects
-
-- In `StringExample` the main method created a new String object `s+=" simon"`
-- The original one remained unchanged
-	- This is because `String` is *immutable*
-- What about a mutable object?
-- `MutableNastiness`
-- Returning mutable objects is bad practice
-- `MutableNastinessFixed` fixes it by returning a new object
-
-
 
 ----
 
@@ -312,6 +374,48 @@ a+=" simon";
 - `final` is not the same as `immutable`
 - `FinalTest` and `FinalTestFixed`
 
+notesonly
+
+~~~~{.java}
+public class FinalTest {
+	public static final class Person {
+		private String name;
+		private Integer age;
+		public Person(String name,Integer age) {
+			this.name = name;
+			this.age = age;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public void setAge(Integer age) {
+			this.age = age;
+		}
+		public String getName() {
+			return name;
+		}
+		public Integer getAge() {
+			return age;
+		}
+	}
+	public static void main(String[] args) {
+		Person p = new Person("Ella",1);
+		p.setAge(2);
+		System.out.println(p.getName() + " is " + p.getAge());
+	}
+}
+~~~~
+
+Here, `Person` is a final class. But this does not mean that its attributes are immutable. You can see this as `main` can invoke methods that change the values of the `name` and `age` attributes. Remember that a class being `final` just means that it cannot be sub-classed (inherited). To make immutable classes, all attributes must be immutable (and no mutable objects must be returned). In this case, we change the attribute declarations to:
+
+~~~~{.java}
+private final String name;
+private final Integer age;
+~~~~
+
+With this modification, the code will not even compile.
+
+endnotesonly
 
 ----
 
@@ -329,6 +433,11 @@ a.add(5);
 System.out.println(a.contains(4)); // Checks is 4 is in a
 ~~~~
 
+notesonly
+
+Be careful of arraylists of integers. Various arraylist methods are overloaded to take an object or an integer as the argument (e.g. remove()). This can get very confusing!
+
+endnotesonly
 
 ----
 
@@ -383,6 +492,46 @@ System.out.println(a.contains(4)); // Checks is 4 is in a
 
 ----
 
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook1 {
+    private ArrayList<String> names;
+    private ArrayList<String> numbers;
+    public PhoneBook1() {
+        names = new ArrayList<String>();
+        numbers = new ArrayList<String>();
+    }    
+    public void addEntry(String name, String number) {
+        names.add(name);
+        numbers.add(number);
+    }
+    public String getNumber(String name) {
+        for(int i=0;i<names.size();i++) {
+            if(names.get(i).equals(name)) {
+                return numbers.get(i);
+            }
+        }
+        return ""; // If name doesn't exist
+    }
+
+    public static void main(String[] args) {
+        PhoneBook1 p = new PhoneBook1();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
 
 - In general looping over all entries will be slow (if lots of entries)
 - A solution:
@@ -391,6 +540,38 @@ System.out.println(a.contains(4)); // Checks is 4 is in a
 	- Store the name and number in the nth position, where n = length of the name
 	- `PhoneBook2.java`
 
+notesonly
+
+~~~~{.java}
+
+public class PhoneBook2 {
+    private String[] names = new String[15];
+    private String[] numbers = new String[15];
+    public void addEntry(String name,String number) {
+        int l = name.length();
+        names[l] = name;
+        numbers[l] = number;
+    }
+    public String getNumber(String name) {
+        int l = name.length();
+        return numbers[l];
+    }
+
+    public static void main(String[] args) {
+        PhoneBook2 p = new PhoneBook2();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
 
 - This is much quicker as we can jump directly to the correct array position.
 - It is a simple example of *hashing*
@@ -407,6 +588,60 @@ System.out.println(a.contains(4)); // Checks is 4 is in a
 - Solution: maintain a list at each array position
 - `PhoneBook3.java`
 
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook3 {
+
+    // Inner class that holds one array entry...
+    private class PhoneList {
+        private ArrayList<String> names = new ArrayList<String>();
+        private ArrayList<String> numbers = new ArrayList<String>();
+        public void addEntry(String name,String number) {
+            names.add(name);
+            numbers.add(number);
+        }
+        public String getNumber(String name) {
+            for(int i=0;i<names.size();i++) {
+                if(names.get(i).equals(name)) {
+                    return numbers.get(i);
+                }
+            }
+            return "";
+        }
+    }
+    private PhoneList[] mainList = new PhoneList[15];
+    public PhoneBook3() {
+        for(int i = 0;i<15;i++) {
+            mainList[i] = new PhoneList();
+        }
+    }
+    public void addEntry(String name, String number) {
+        int l = name.length();
+        mainList[l].addEntry(name, number);
+    }
+    public String getNumber(String name) {
+        int l = name.length();
+        return  mainList[l].getNumber(name);
+    }
+
+    public static void main(String[] args) {
+        PhoneBook3 p = new PhoneBook3();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
 
 - Final problem is what to do if a name is longer than 15?
 - Solution:
@@ -414,6 +649,61 @@ System.out.println(a.contains(4)); // Checks is 4 is in a
 	- Store entries in the position length % 6
 	- `PhoneBook4.java`
 
+notesonly
+
+~~~~{.java}
+
+import java.util.ArrayList;
+public class PhoneBook4 {
+
+    // Inner class that holds one array entry...
+    private class PhoneList {
+        private ArrayList<String> names = new ArrayList<String>();
+        private ArrayList<String> numbers = new ArrayList<String>();
+        public void addEntry(String name,String number) {
+            names.add(name);
+            numbers.add(number);
+        }
+        public String getNumber(String name) {
+            for(int i=0;i<names.size();i++) {
+                if(names.get(i).equals(name)) {
+                    return numbers.get(i);
+                }
+            }
+            return "";
+        }
+    }
+    private PhoneList[] mainList = new PhoneList[15];
+    private static final int MAX_LENGTH = 6; // Change here...
+    public PhoneBook3() {
+        for(int i = 0;i<MAX_LENGTH;i++) {
+            mainList[i] = new PhoneList();
+        }
+    }
+    public void addEntry(String name, String number) {
+        int l = name.length() % MAX_LENGTH; // Change here...
+        mainList[l].addEntry(name, number);
+    }
+    public String getNumber(String name) {
+        int l = name.length() % MAX_LENGTH; // Change here...
+        return  mainList[l].getNumber(name);
+    }
+
+    public static void main(String[] args) {
+        PhoneBook3 p = new PhoneBook3();
+        p.addEntry("Simon", "0777777777");
+        p.addEntry("Jennifer", "0666677889");
+        p.addEntry("Ravi", "056782776");
+        p.addEntry("Ken", "0447838827");
+        p.addEntry("Hannah", "066848382");
+
+        System.out.println(p.getNumber("Ravi"));
+    }
+}
+
+~~~~
+
+endnotesonly
 
 - This is the basics of hashing
 - Length isn't a great hash function
@@ -473,6 +763,46 @@ public class MyClass<T> {
 - Can also have multiple types in the definition (`<A,B,C,D>`)
 - See `Dictionary.java`
 
+notesonly
+
+~~~~{.java}
+import java.util.ArrayList;
+// A hacky alternative to HashMaps to demonstrate
+// making a class with generics
+public class Dictionary<A,B> {
+	private ArrayList<A> listA = new ArrayList<A>();
+	private ArrayList<B> listB = new ArrayList<B>();
+	public void add(A a,B b) {
+		listA.add(a);
+		listB.add(b);
+	}
+	public B getDefinition(A a) {
+		int index = listA.indexOf(a);
+		return listB.get(index);
+	}
+}
+~~~~
+
+
+~~~~{.java}
+public class DictionaryTest {
+	public static void main(String[] args) {
+		Dictionary<String,Double> d = new Dictionary<String,Double>();
+		d.add("apple",3.0);
+		d.add("banana",2.5);
+		System.out.println(d.getDefinition("banana"));
+
+		// Can also make the reverse!
+		Dictionary<Double,String> d2 = new Dictionary<Double,String>();
+		d2.add(3.0,"apple");
+		d2.add(2.5,"banana");
+		System.out.println(d2.getDefinition(3.0));
+
+	}
+}
+~~~~
+
+endnotesonly
 
 
 # Testing

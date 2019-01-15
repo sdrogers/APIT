@@ -262,7 +262,6 @@ a+=" simon";
 - Objects are stored in the heap, references to objects are stored in the stack
 
 
-notesonly
 
 ~~~~ {.java}
 public class CallExamples {
@@ -338,7 +337,6 @@ In the final example, we do see the value change reflected in `main`. This is be
 
 If you're struggling with this, keep in mind what a reference to an object is. Perhaps the best way to think of it is as the address of the bit of memory in which the object is stored. E.g. if you think of memory as a set of pigeon holes, then the reference stores which pigeon hole it is in. When we pass an object reference to a method, it creates its own local copy of the reference and therefore knows where the object is stored, and can  change it (assuming it permits changes). When a new object is created, it is put in a new pigeon hole and the local reference is changed (but not the original). So, in the first example above, the object referenced by `m` is left unchanged when `aTest()` creates a new object. The same thing is happening in examples 2 and 3, even though there is no `new` statement - because String and Double are immutable, new objects are made when we try and change them (see Figures below). In the final example, the reference never changes so the method can make changes to the original object.
 
-endnotesonly
 
 ----
 
@@ -360,74 +358,6 @@ endnotesonly
 
 ![Back in main, s is still a reference to the original object. What happens to the "hello added" string when we return to main?](Figures/stringthing5.jpg)
 
-----
-
-
-
-## Mutable objects
-
-- In `StringExample` the main method created a new String object `s+=" simon"`
-- The original one remained unchanged
-	- This is because `String` is *immutable*
-- What about a mutable object?
-- `MutableNastiness`
-- Returning mutable objects is bad practice
-- `MutableNastinessFixed` fixes it by returning a new object
-
-notesonly
-
-~~~~{.java}
-public class MutableNastiness {
-	public static class MyDouble {
-		private Double a;
-		public MyDouble(Double a) {
-			this.a = a;
-		}
-		public void multiply(Double m) {
-			a = a * m;
-		}
-		public Double getValue() {
-			return a;
-		}
-	}
-	public static class DoubleWrapper {
-		private MyDouble d;
-		public DoubleWrapper(Double in) {
-			this.d = new MyDouble(in);
-		}
-		public MyDouble getMyDouble() {
-			return d;
-		}
-		public void multiply(Double m) {
-			d.multiply(m);
-		}
-		public Double getValue() {
-			return d.getValue();
-		}
-	}
-
-	public static void main(String[] args) {
-		// Create a Double object
-		DoubleWrapper dw = new DoubleWrapper(3.2);
-		MyDouble d = dw.getMyDouble();
-		System.out.println(d.getValue());
-		d.multiply(2.0);
-		System.out.println(d.getValue());
-		System.out.println(dw.getValue());
-	}
-}
-~~~~
-
-In this example, `DoubleWrapper` is used to hold a `MyDouble` object. When we call `getMyDouble()` it returns the reference to its own `MyDouble` object. So, when we subsequently change that object, we are changing the object within `DoubleWrapper`. This is not good practice as it can result in unpredictable behaviour - someone else changes an object you rely on. To avoid this, try to only ever return immutable objects or new objects. For example, in `MutableNastinessFixed` the `getMyDouble()` method is changed to create a new object. Now, changes to the object returned do not change the original:
-
-~~~~{.java}
-public MyDouble getMyDouble() {
-	return new MyDouble(getValue());
-}
-~~~~
-
-endnotesonly
-
 
 ----
 
@@ -442,7 +372,6 @@ endnotesonly
 - `final` is not the same as `immutable`
 - `FinalTest` and `FinalTestFixed`
 
-notesonly
 
 ~~~~{.java}
 public class FinalTest {
@@ -483,7 +412,6 @@ private final Integer age;
 
 With this modification, the code will not even compile.
 
-endnotesonly
 
 ----
 
@@ -501,11 +429,9 @@ a.add(5);
 System.out.println(a.contains(4)); // Checks is 4 is in a
 ~~~~
 
-notesonly
 
 Be careful of arraylists of integers. Various arraylist methods are overloaded to take an object or an integer as the argument (e.g. remove()). This can get very confusing!
 
-endnotesonly
 
 ----
 
@@ -560,7 +486,6 @@ endnotesonly
 
 ----
 
-notesonly
 
 ~~~~{.java}
 
@@ -599,7 +524,6 @@ public class PhoneBook1 {
 
 ~~~~
 
-endnotesonly
 
 - In general looping over all entries will be slow (if lots of entries)
 - A solution:
@@ -608,7 +532,6 @@ endnotesonly
 	- Store the name and number in the nth position, where n = length of the name
 	- `PhoneBook2.java`
 
-notesonly
 
 ~~~~{.java}
 
@@ -639,7 +562,6 @@ public class PhoneBook2 {
 
 ~~~~
 
-endnotesonly
 
 - This is much quicker as we can jump directly to the correct array position.
 - It is a simple example of *hashing*
@@ -656,7 +578,6 @@ endnotesonly
 - Solution: maintain a list at each array position
 - `PhoneBook3.java`
 
-notesonly
 
 ~~~~{.java}
 
@@ -709,7 +630,6 @@ public class PhoneBook3 {
 
 ~~~~
 
-endnotesonly
 
 - Final problem is what to do if a name is longer than 15?
 - Solution:
@@ -717,7 +637,6 @@ endnotesonly
 	- Store entries in the position length % 6
 	- `PhoneBook4.java`
 
-notesonly
 
 ~~~~{.java}
 
@@ -771,7 +690,6 @@ public class PhoneBook4 {
 
 ~~~~
 
-endnotesonly
 
 - This is the basics of hashing
 - Length isn't a great hash function
@@ -831,7 +749,6 @@ public class MyClass<T> {
 - Can also have multiple types in the definition (`<A,B,C,D>`)
 - See `Dictionary.java`
 
-notesonly
 
 ~~~~{.java}
 import java.util.ArrayList;
@@ -870,7 +787,6 @@ public class DictionaryTest {
 }
 ~~~~
 
-endnotesonly
 
 
 # Testing
