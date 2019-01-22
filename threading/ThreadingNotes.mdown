@@ -1,4 +1,0 @@
-% Threading notes % Simon Rogers % 30/10/2014 \# The Runnable interface
-Code to be put in threads needs to be inside classes that implement the
-Runnable interface. \~\~\~\~ {.java} public class Runnable { public void
-run() { } } \~\~\~\~

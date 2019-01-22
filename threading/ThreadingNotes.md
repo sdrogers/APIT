@@ -695,12 +695,33 @@ The problem is found in the `run()` method:
 
 ----
 
+## Monitors
+
+ - Before we solve this problem, we need to know about _monitors_
+ - Every object has a _monitor_
+ - _monitors_ help us to synchronise `Threads`
+ - If one `Thread` locks the monitor on a particular object, other `Threads` cannot.
+ - Other `Threads` _wait_ until the original `Thread` unlocks 
+
+----
+
+## The life-cycle of a `Thread`
+
+ - In the previous slide we mentioned `Threads` _waiting_
+ - `Threads` can exist in various states
+ 	- We need to understand the _blocked_ and _waiting_ states
+ 	- We will refer back to the following diagram later...
+
+----
+
+![Thread states - Source: Core Java Vol 1, 9th Edition, Horstmann, Cay S. & Cornell, Gary_2013](figures/threadLifeCycle.jpg)
+
+----
+
 ## Synchronized
 
-- To overcome race conditions, we must *lock* objects.
-- All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)
-- A thread can lock a monitor, ensuring no other threads can modify it
-- Other threads trying are blocked until the lock is released
+- To overcome race conditions, we must *lock* the monitor of the shared object.
+- Other threads trying are _blocked_ until the lock is released
 - The easiest way is with `synchronized` blocks and methods.
 
 ----
@@ -731,6 +752,35 @@ public void run() {
 - No other threads can modify `count` when the thread is in this block.
 - This will also fix the problen - try it
 - There are other blocks that could be synchronized - try some
+- `Threads` that get to the synchronized code when it is locked enter the _blocked_ state (see previous diagram)
+
+----
+
+## `wait` and `notify`
+
+ - In more complex examples, we might need a one `Thread` to tell another when something has happened.
+ - `wait` and `notify` (and `notifyAll`) allow us to do this
+ - They work with respect to a particular Object
+
+----
+
+ - The process:
+ 	- A `Thread` synchronizes an object and then called `Object.wait()`
+ 	- it is then moved to the _waiting_ state
+ 	- Other `Threads` can now synchronize the object (and maybe also enter the _waiting_ state)
+ 	- If another `Thread` synchronizes the `Object` and then calls `Object.notify()` one waiting `Thread` is moved from _waiting_ to _blocked_ and will continue once it can regain synchronization
+
+----
+
+## A simple example -- Waiter and Notifier
+
+ - We will create an example with two `Threads` and one shared object
+ - The type of object is irrelevant
+ - One `Thread` will synchronise and then `wait`
+ - The other will sleep a while then `synchronize` and `notify`
+ - At this point, the other `Thread` will be awoken and can continue _once_ the notifier relinquishes the monitor (i.e. leaves the sychronized block)
+ - `Waiter.java`, `Notifier.java`, `WaiterNotifier.java`
+ - The difference between `notify` and `notifyAll` will become apparent if there are multiple `Waiter` objects
 
 ----
 
@@ -865,6 +915,15 @@ public void increment(int amount) {
 	- The syntax in `decrement()` means that `signalAll()` will cause the thread to check again.
 	- It might just end up invoking `await()` again.
 - Run `CounterDecounter3` and verify that `count` never becomes negative
+- `signalAll` is analogous to `notifyAll` (`signal` is equivalent to `notify`)
+
+----
+
+### `wait` versus `await`
+
+ - Using `wait` and `notify` is very similar to `await` and `signal`
+ - A key difference is that you could create multiple locks and conditions in a single object and have `Threads` waiting for different things
+ - Can only wait for one thing per `Object` With `wait` and `notify` 
 
 ----
 

@@ -73,7 +73,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#the-benefits-of-parallel-processing">The benefits of parallel processing</a></li>
 <li><a href="#merge-sort">Merge sort</a></li>
 <li><a href="#shared-variables">Shared variables</a></li>
+<li><a href="#monitors">Monitors</a></li>
+<li><a href="#the-life-cycle-of-a-thread">The life-cycle of a <code>Thread</code></a></li>
 <li><a href="#synchronized">Synchronized</a></li>
+<li><a href="#wait-and-notify"><code>wait</code> and <code>notify</code></a></li>
+<li><a href="#a-simple-example----waiter-and-notifier">A simple example -- Waiter and Notifier</a></li>
 <li><a href="#locks">Locks</a></li>
 <li><a href="#deadlocks">Deadlocks</a></li>
 <li><a href="#conditions">Conditions</a></li>
@@ -334,6 +338,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>But remember - classes can only extend one other class</li>
 <li>Often, implementing <code>Runnable</code> will be more sensible</li>
 </ul>
+<hr />
 <h2 id="have-you-been-paying-attention">Have you been paying attention?!</h2>
 <p>Can you predict the output of this?</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MainThread <span class="kw">extends</span> <span class="bu">Thread</span>{
@@ -640,12 +645,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>We'll now look at ways of overcoming it</li>
 </ul>
 <hr />
+<h2 id="monitors">Monitors</h2>
+<ul>
+<li>Before we solve this problem, we need to know about <em>monitors</em></li>
+<li>Every object has a <em>monitor</em></li>
+<li><em>monitors</em> help us to synchronise <code>Threads</code></li>
+<li>If one <code>Thread</code> locks the monitor on a particular object, other <code>Threads</code> cannot.</li>
+<li>Other <code>Threads</code> <em>wait</em> until the original <code>Thread</code> unlocks</li>
+</ul>
+<hr />
+<h2 id="the-life-cycle-of-a-thread">The life-cycle of a <code>Thread</code></h2>
+<ul>
+<li>In the previous slide we mentioned <code>Threads</code> <em>waiting</em></li>
+<li><code>Threads</code> can exist in various states
+<ul>
+<li>We need to understand the <em>blocked</em> and <em>waiting</em> states</li>
+<li>We will refer back to the following diagram later...</li>
+</ul></li>
+</ul>
+<hr />
+<div class="figure">
+<img src="figures/threadLifeCycle.jpg" alt="Thread states - Source: Core Java Vol 1, 9th Edition, Horstmann, Cay S. &amp; Cornell, Gary_2013" />
+<p class="caption">Thread states - Source: Core Java Vol 1, 9th Edition, Horstmann, Cay S. &amp; Cornell, Gary_2013</p>
+</div>
+<hr />
 <h2 id="synchronized">Synchronized</h2>
 <ul>
-<li>To overcome race conditions, we must <em>lock</em> objects.</li>
-<li>All objects have an associated monitor that can be locked or unlocked (we don't see the monitor, but it is there in the background)</li>
-<li>A thread can lock a monitor, ensuring no other threads can modify it</li>
-<li>Other threads trying are blocked until the lock is released</li>
+<li>To overcome race conditions, we must <em>lock</em> the monitor of the shared object.</li>
+<li>Other threads trying are <em>blocked</em> until the lock is released</li>
 <li>The easiest way is with <code>synchronized</code> blocks and methods.</li>
 </ul>
 <hr />
@@ -676,6 +703,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>No other threads can modify <code>count</code> when the thread is in this block.</li>
 <li>This will also fix the problen - try it</li>
 <li>There are other blocks that could be synchronized - try some</li>
+<li><code>Threads</code> that get to the synchronized code when it is locked enter the <em>blocked</em> state (see previous diagram)</li>
+</ul>
+<hr />
+<h2 id="wait-and-notify"><code>wait</code> and <code>notify</code></h2>
+<ul>
+<li>In more complex examples, we might need a one <code>Thread</code> to tell another when something has happened.</li>
+<li><code>wait</code> and <code>notify</code> (and <code>notifyAll</code>) allow us to do this</li>
+<li>They work with respect to a particular Object</li>
+</ul>
+<hr />
+<ul>
+<li>The process:
+<ul>
+<li>A <code>Thread</code> synchronizes an object and then called <code>Object.wait()</code></li>
+<li>it is then moved to the <em>waiting</em> state</li>
+<li>Other <code>Threads</code> can now synchronize the object (and maybe also enter the <em>waiting</em> state)</li>
+<li>If another <code>Thread</code> synchronizes the <code>Object</code> and then calls <code>Object.notify()</code> one waiting <code>Thread</code> is moved from <em>waiting</em> to <em>blocked</em> and will continue once it can regain synchronization</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="a-simple-example----waiter-and-notifier">A simple example -- Waiter and Notifier</h2>
+<ul>
+<li>We will create an example with two <code>Threads</code> and one shared object</li>
+<li>The type of object is irrelevant</li>
+<li>One <code>Thread</code> will synchronise and then <code>wait</code></li>
+<li>The other will sleep a while then <code>synchronize</code> and <code>notify</code></li>
+<li>At this point, the other <code>Thread</code> will be awoken and can continue <em>once</em> the notifier relinquishes the monitor (i.e. leaves the sychronized block)</li>
+<li><code>Waiter.java</code>, <code>Notifier.java</code>, <code>WaiterNotifier.java</code></li>
+<li>The difference between <code>notify</code> and <code>notifyAll</code> will become apparent if there are multiple <code>Waiter</code> objects</li>
 </ul>
 <hr />
 <h2 id="locks">Locks</h2>
