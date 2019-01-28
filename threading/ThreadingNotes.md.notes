@@ -310,7 +310,6 @@ public class SimpleThreadTest {
 - But remember - classes can only extend one other class
 - Often, implementing `Runnable` will be more sensible
 
-----
 
 ## Have you been paying attention?!
 
@@ -896,6 +895,15 @@ public void increment(int amount) {
 	- The syntax in `decrement()` means that `signalAll()` will cause the thread to check again.
 	- It might just end up invoking `await()` again.
 - Run `CounterDecounter3` and verify that `count` never becomes negative
+- `signalAll` is analogous to `notifyAll` (`signal` is equivalent to `notify`)
+
+----
+
+### `wait` versus `await`
+
+ - Using `wait` and `notify` is very similar to `await` and `signal`
+ - A key difference is that you could create multiple locks and conditions in a single object and have `Threads` waiting for different things
+ - Can only wait for one thing per `Object` With `wait` and `notify` 
 
 ----
 

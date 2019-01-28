@@ -80,7 +80,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#a-simple-example----waiter-and-notifier">A simple example -- Waiter and Notifier</a></li>
 <li><a href="#locks">Locks</a></li>
 <li><a href="#deadlocks">Deadlocks</a></li>
-<li><a href="#conditions">Conditions</a></li>
+<li><a href="#conditions">Conditions</a><ul>
+<li><a href="#wait-versus-await"><code>wait</code> versus <code>await</code></a></li>
+</ul></li>
 </ul></li>
 <li><a href="#threads-in-swing">Threads in Swing</a><ul>
 <li><a href="#the-event-dispatch-thread">The <code>event dispatch</code> thread</a></li>
@@ -338,7 +340,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>But remember - classes can only extend one other class</li>
 <li>Often, implementing <code>Runnable</code> will be more sensible</li>
 </ul>
-<hr />
 <h2 id="have-you-been-paying-attention">Have you been paying attention?!</h2>
 <p>Can you predict the output of this?</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MainThread <span class="kw">extends</span> <span class="bu">Thread</span>{
@@ -852,6 +853,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>It might just end up invoking <code>await()</code> again.</li>
 </ul></li>
 <li>Run <code>CounterDecounter3</code> and verify that <code>count</code> never becomes negative</li>
+<li><code>signalAll</code> is analogous to <code>notifyAll</code> (<code>signal</code> is equivalent to <code>notify</code>)</li>
+</ul>
+<hr />
+<h3 id="wait-versus-await"><code>wait</code> versus <code>await</code></h3>
+<ul>
+<li>Using <code>wait</code> and <code>notify</code> is very similar to <code>await</code> and <code>signal</code></li>
+<li>A key difference is that you could create multiple locks and conditions in a single object and have <code>Threads</code> waiting for different things</li>
+<li>Can only wait for one thing per <code>Object</code> With <code>wait</code> and <code>notify</code></li>
 </ul>
 <hr />
 <h1 id="threads-in-swing">Threads in Swing</h1>
