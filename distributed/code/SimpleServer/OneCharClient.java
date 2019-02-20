@@ -11,6 +11,11 @@ public class OneCharClient {
             InputStreamReader sr = new InputStreamReader(s.getInputStream());
             int c = sr.read();
             System.out.println((char)c); // Print the character
+
+            c = sr.read();
+            System.out.println((char)c); // Print the character
+
+
             sr.close(); // Close the reader
             s.close(); // close the socket
         }catch(IOException e) {

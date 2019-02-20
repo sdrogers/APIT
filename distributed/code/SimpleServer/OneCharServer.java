@@ -16,6 +16,8 @@ public class OneCharServer {
             OutputStreamWriter os = new OutputStreamWriter(client.getOutputStream());
         
             os.write('x');
+            os.write('m');
+            os.write('s');
             os.flush();
 
             client.close();

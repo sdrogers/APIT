@@ -2,6 +2,7 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Scanner;
 
 public class Server {
     public static void main(String[] args) {
