@@ -18,13 +18,14 @@ public class SimpleStack {
     private ArrayList<Integer> a = new ArrayList<Integer>();
     int pos = 0;
     private ReentrantLock lock = new ReentrantLock();
-    
+    private Condition cond = lock.newCondition();
     // Get the last 'job' that was added
     public Integer getJob() {
         lock.lock();
-        while(pos == 0) {
+        while(pos == 0) { // no jobs
             try {
-                Thread.sleep(1);
+                // Thread.sleep(1);
+                cond.await();
                 System.out.println(Thread.currentThread().getName() + " is waiting");
             }catch(InterruptedException e) {
                 e.printStackTrace();
@@ -41,6 +42,7 @@ public class SimpleStack {
         lock.lock();
         a.add(val);
         pos += 1;
+        cond.signal();
         lock.unlock();
     }
     // Useful method for printing
