@@ -40,8 +40,8 @@ hs_err_pid*
 !.vscode/extensions.json
 *.code-workspace
 
-# Eclipse Ignores
-#################
+# Eclipse
+#########
 
 .metadata
 bin/
@@ -99,3 +99,16 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+
+# NetBeans
+##########
+
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
